@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Button from '@mui/material/Button'
 import SendIcon from '@mui/icons-material/Send';
 import Link from "next/link";

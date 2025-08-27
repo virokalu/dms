@@ -1,3 +1,10 @@
+import ToolBox from "@/app/ui/dashboard/toolbox"
+
 export default function Page() {
-  return <p>Deals Page</p>;
+  return (
+    <>
+      <ToolBox title={"Deals"} />
+      <p>Deals Page</p>
+    </>
+  )
 }
