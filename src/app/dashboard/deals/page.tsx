@@ -36,9 +36,9 @@ export default function Page() {
   return (
     <>
       <Link href={'deals/create'}>
-      <Button  size="large" variant="contained" color="primary" endIcon={<AddIcon />}>
-        Create Deal
-      </Button>
+        <Button  size="large" variant="contained" color="primary" endIcon={<AddIcon />}>
+          Create Deal
+        </Button>
       </Link>
       <div className='mt-5'>
         <TableContainer component={Paper}>

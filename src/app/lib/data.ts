@@ -11,7 +11,7 @@ export async function fetchDeals() {
     const deals = await res.json();
     return deals;
   } catch (error) {
-    console.error("Database Error:", error);
+    console.error("Error:", error);
     throw new Error("Failed to fetch deals data.");
   }
 }
