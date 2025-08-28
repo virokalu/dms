@@ -63,7 +63,7 @@ export default function Page() {
                     <TableCell>{deal.name}</TableCell>
                     <TableCell>{deal.video}</TableCell>
                     <TableCell>
-                      <Link href={'/dashboard/deals'} className="p-2 hover:bg-gray-100">
+                      <Link href={`/dashboard/deals/${deal.slug}/edit`} className="p-2 hover:bg-gray-100">
                         <EditIcon />
                       </Link>
                     </TableCell>
