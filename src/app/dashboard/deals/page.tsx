@@ -1,10 +1,5 @@
 import { Deal } from '@/app/lib/definitions';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
-import React,
-{
-  useState,
-  useEffect
-} from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import Link from 'next/link';
 import AddIcon from '@mui/icons-material/Add';
