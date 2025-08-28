@@ -1,3 +1,5 @@
+import { Deal } from "./definitions";
+
 const API = new URL(`${process.env.API_URL}`);
 
 export async function fetchDeals() {
@@ -8,7 +10,7 @@ export async function fetchDeals() {
         const msg = (await res.text()).split('\n').join(',');
         throw new Error(msg);
     }
-    const deals = await res.json();
+    const deals: Deal[] = await res.json();
     return deals;
   } catch (error) {
     console.error("Error:", error);
@@ -26,7 +28,7 @@ export async function fetchDealBySlug(slug: string) {
         const msg = (await res.text()).split('\n').join(',');
         throw new Error(msg);
     }
-    const deal = await res.json();
+    const deal: Deal = await res.json();
     return deal;
   } catch (error) {
     console.error("Error:", error);

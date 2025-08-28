@@ -2,12 +2,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { Deal } from "./definitions";
 
 const API = new URL(`${process.env.API_URL}`);
 
 const FormSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   slug: z.string(),
   name: z.string(),
   video: z.string(),
@@ -82,6 +81,25 @@ export async function updateDeal(formData: FormData){
     throw new Error("Failed to create deals data.");
   } finally {
     revalidatePath("/dashboard/deals");
+    redirect("/dashboard/deals");
+  }
+}
+
+export async function deleteDeal(id: string){
+  try {
+    process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+
+    const res = await fetch(`${API}/${id}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) {
+      const msg = (await res.text()).split("\n").join(",");
+      throw new Error(msg);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    throw new Error("Failed to delete deals data.");
+  } finally {
     redirect("/dashboard/deals");
   }
 }

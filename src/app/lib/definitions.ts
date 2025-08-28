@@ -1,5 +1,5 @@
 export type Deal = {
-    id: number;
+    id: string;
     slug: string;
     name: string;
     video: string;
