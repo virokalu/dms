@@ -1,5 +1,5 @@
 import { Deal } from '@/app/lib/definitions';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import Link from 'next/link';
 import AddIcon from '@mui/icons-material/Add';
@@ -15,14 +15,14 @@ export default async function Page() {
           Create Deal
         </Button>
       </Link>
-      <div className='mt-5'>
+      <Box className='mt-5'>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Slug</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Video</TableCell>
+                <TableCell><b>Slug</b></TableCell>
+                <TableCell><b>Name</b></TableCell>
+                <TableCell><b>Video</b></TableCell>
                 <TableCell></TableCell>
                 <TableCell></TableCell>
               </TableRow>
@@ -39,7 +39,7 @@ export default async function Page() {
                     <TableCell>{deal.video}</TableCell>
                     <TableCell>
                       <Link href={`/dashboard/deals/${deal.slug}/edit`} className="p-2 hover:bg-gray-100">
-                        <EditIcon />
+                        <EditIcon color='primary'/>
                       </Link>
                     </TableCell>
                     <TableCell>
@@ -51,7 +51,7 @@ export default async function Page() {
             </TableBody>
           </Table>
         </TableContainer>
-      </div>
+      </Box>
     </>
   )
 }

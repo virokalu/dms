@@ -1,14 +1,15 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
+import { Box } from '@mui/material';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
-            <div className="w-full flex-none md:w-64">
+        <Box className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+            <Box className="w-full flex-none md:w-64">
                 <SideNav />
-            </div>
-            <div className="flex-grow p-6 md:overflow-y-auto md:p-12">
+            </Box>
+            <Box className="flex-grow p-6 md:overflow-y-auto md:p-12">
                 {children}
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 }

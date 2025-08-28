@@ -9,7 +9,7 @@ export default async function Page(props: { params: Promise<{ slug: string }> })
     const slug = params.slug;
     const deal: Deal = await fetchDealBySlug(slug);
     return (
-        <div>
+        <Box>
             <form action={updateDeal}>
                 <Box
                     sx={{
@@ -59,15 +59,15 @@ export default async function Page(props: { params: Promise<{ slug: string }> })
                         defaultValue={deal.video}
                     />
                 </Box>
-                <div className='mt-6 flex gap-4'>
+                <Box className='mt-6 flex gap-4'>
                     <Link href={'/dashboard/deals'}>
                         <Button variant="outlined" className='px-4'>Cancel</Button>
                     </Link>
                     <Button type="submit" variant="contained" color="primary">
                         Update
                     </Button>
-                </div>
+                </Box>
             </form>
-        </div>
+        </Box>
     );
 }

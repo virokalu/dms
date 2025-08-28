@@ -5,7 +5,7 @@ import { createDeal } from '@/app/lib/action';
 
 export default function Page() {
     return (
-        <div>
+        <Box>
             <form action={createDeal}>
                 <Box
                     sx={{
@@ -41,15 +41,15 @@ export default function Page() {
                         variant="outlined"
                     />
                 </Box>
-                <div className='mt-6 flex gap-4'>
+                <Box className='mt-6 flex gap-4'>
                     <Link href={'/dashboard/deals'}>
                         <Button variant="outlined" className='px-4'>Cancel</Button>
                     </Link>
                     <Button type="submit" variant="contained" color="primary">
                         Submit
                     </Button>
-                </div>
+                </Box>
             </form>
-        </div>
+        </Box>
     );
 }
