@@ -10,11 +10,17 @@ export default async function Page() {
   const dealsData: Deal[] = await fetchDeals();
   return (
     <>
-      <Link href={'deals/create'}>
-        <Button size="large" variant="contained" color="primary" endIcon={<AddIcon />}>
-          Create Deal
-        </Button>
-      </Link>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        width: '100%',
+      }}>
+        <Link href={'deals/create'}>
+          <Button size="large" variant="contained" color="primary" endIcon={<AddIcon />}>
+            Create Deal
+          </Button>
+        </Link>
+      </Box>
       <Box className='mt-5'>
         <TableContainer component={Paper}>
           <Table>
@@ -39,11 +45,11 @@ export default async function Page() {
                     <TableCell>{deal.video}</TableCell>
                     <TableCell>
                       <Link href={`/dashboard/deals/${deal.slug}/edit`} className="p-2 hover:bg-gray-100">
-                        <EditIcon color='primary'/>
+                        <EditIcon color='primary' />
                       </Link>
                     </TableCell>
                     <TableCell>
-                      <DeleteDeal id={deal.id}/>
+                      <DeleteDeal id={deal.id} />
                     </TableCell>
                   </TableRow>
                 ))
