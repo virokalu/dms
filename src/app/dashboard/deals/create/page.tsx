@@ -4,22 +4,21 @@ import { Box, Button } from '@mui/material'
 import Link from 'next/link';
 import { createDeal } from '@/app/lib/action';
 import { useActionState, useEffect } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+import Notify from '@/app/ui/notify';
 
 export default function Page() {
     const [state, createDealAction] = useActionState(createDeal,{
         type: "",
         message: "",
     });
-
-    useEffect(() =>{ 
-        if(state.type==="error"){
-            toast("error");
-        }else if(state.type=="success"){
-            toast("success");
+    const router = useRouter();
+    useEffect(() =>{  
+        Notify(state.type,state.message);
+        if(state.type=="success"){
+            router.back();
         }
-    },[state])
-
+    },[state, router])
     return (
         <Box>
             <form action={createDealAction}>
@@ -66,7 +65,6 @@ export default function Page() {
                     </Button>
                 </Box>
             </form>
-            <ToastContainer/>
         </Box>
     );
 }

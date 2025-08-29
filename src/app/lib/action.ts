@@ -49,7 +49,7 @@ export async function createDeal(
     };
   } else {
     return {
-      type: "sucess",
+      type: "success",
       message: "Deal created successfully",
     };
 
