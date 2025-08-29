@@ -1,9 +1,6 @@
-import { updateDeal } from "@/app/lib/action";
 import { fetchDealBySlug } from "@/app/lib/data";
 import { Deal } from "@/app/lib/definitions";
 import EditDeal from "@/app/ui/deals/editDeal";
-import { Box, Button, TextField } from "@mui/material";
-import Link from "next/link";
 
 export default async function Page(props: { params: Promise<{ slug: string }> }) {
     const params = await props.params;

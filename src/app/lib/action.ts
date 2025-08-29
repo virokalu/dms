@@ -1,6 +1,5 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const API = new URL(`${process.env.API_URL}`);
@@ -99,24 +98,30 @@ export async function updateDeal(
       message: "Deal updated successfully",
     };
   }
-
 }
 
-export async function deleteDeal(id: string) {
-  try {
-    process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+export async function deleteDeal(prevState: {
+  id: string;
+  type: string;
+  message: string;
+}): Promise<{ id: string; type: string; message: string }> {
+  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
-    const res = await fetch(`${API}/${id}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) {
-      const msg = (await res.text()).split("\n").join(",");
-      throw new Error(msg);
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    throw new Error("Failed to delete deals data.");
-  } finally {
-    redirect("/dashboard/deals");
+  const res = await fetch(`${API}/${prevState.id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const msg = (await res.text()).split("\n").join(",");
+    return {
+      id: prevState.id,
+      type: "error",
+      message: `${msg || "Something went wrong"}`,
+    };
+  } else {
+    return {
+      id: prevState.id,
+      type: "success",
+      message: "Deal deleted successfully",
+    };
   }
 }
