@@ -1,12 +1,28 @@
+'use client'
 import TextField from '@mui/material/TextField'
 import { Box, Button } from '@mui/material'
 import Link from 'next/link';
 import { createDeal } from '@/app/lib/action';
+import { useActionState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function Page() {
+    const [state, createDealAction] = useActionState(createDeal,{
+        type: "",
+        message: "",
+    });
+
+    useEffect(() =>{ 
+        if(state.type==="error"){
+            toast("error");
+        }else if(state.type=="success"){
+            toast("success");
+        }
+    },[state])
+
     return (
         <Box>
-            <form action={createDeal}>
+            <form action={createDealAction}>
                 <Box
                     sx={{
                         minWidth: 500,
@@ -50,6 +66,7 @@ export default function Page() {
                     </Button>
                 </Box>
             </form>
+            <ToastContainer/>
         </Box>
     );
 }

@@ -15,7 +15,13 @@ const FormSchema = z.object({
 const CreateDeal = FormSchema.omit({ id: true });
 const UpdateDeal = FormSchema.omit({ id: true });
 
-export async function createDeal(formData: FormData) {
+export async function createDeal(
+  prevState: {
+    type: string;
+    message: string;
+  },
+  formData: FormData
+): Promise<{ type: string; message: string }> {
   const { slug, name, video } = CreateDeal.parse({
     slug: formData.get("slug"),
     name: formData.get("name"),
@@ -28,28 +34,31 @@ export async function createDeal(formData: FormData) {
     video: video,
   };
 
-  try {
-    process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
-    const res = await fetch(`${API}`, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!res.ok) {
-      const msg = (await res.text()).split("\n").join(",");
-      throw new Error(msg);
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    throw new Error("Failed to create deals data.");
-  } finally {
-    revalidatePath("/dashboard/deals");
-    redirect("/dashboard/deals");
+  const res = await fetch(`${API}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!res.ok) {
+    const msg = (await res.text()).split("\n").join(",");
+    return {
+      type: "error",
+      message: `${msg}`,
+    };
+  } else {
+    return {
+      type: "sucess",
+      message: "Deal created successfully",
+    };
+
+    // revalidatePath("/dashboard/deals");
+    // redirect("/dashboard/deals");
   }
 }
 
-export async function updateDeal(formData: FormData){
+export async function updateDeal(formData: FormData) {
   const { slug, name, video } = UpdateDeal.parse({
     slug: formData.get("slug"),
     name: formData.get("name"),
@@ -85,12 +94,12 @@ export async function updateDeal(formData: FormData){
   }
 }
 
-export async function deleteDeal(id: string){
+export async function deleteDeal(id: string) {
   try {
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
     const res = await fetch(`${API}/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
     if (!res.ok) {
       const msg = (await res.text()).split("\n").join(",");
