@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { CreateDealModel } from "./definitions";
 
 const API = new URL(`${process.env.API_URL}`);
 
@@ -11,7 +12,7 @@ const FormSchema = z.object({
   video: z.string(),
 });
 
-const CreateDeal = FormSchema.omit({ id: true });
+// const CreateDeal = FormSchema.omit({ id: true });
 const UpdateDeal = FormSchema.omit({ id: true });
 
 export async function createDeal(
@@ -19,21 +20,24 @@ export async function createDeal(
     type: string;
     message: string;
   },
-  formData: FormData
+  data: CreateDealModel
 ): Promise<{ type: string; message: string }> {
-  const { slug, name, video } = CreateDeal.parse({
-    slug: formData.get("slug"),
-    name: formData.get("name"),
-    video: formData.get("video"),
-  });
+  // const { slug, name, video } = CreateDeal.parse({
+  //   slug: formData.get("slug"),
+  //   name: formData.get("name"),
+  //   video: formData.get("video"),
+  // });
 
-  const data = {
-    name: name,
-    slug: slug,
-    video: video,
-  };
+  // const data = {
+  //   name: name,
+  //   slug: slug,
+  //   video: video,
+  //   hotels:[
+      
+  //   ]
+  // };
 
-  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+  // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
   const res = await fetch(`${API}`, {
     method: "POST",
@@ -78,7 +82,7 @@ export async function updateDeal(
     slug: slug,
     video: video,
   };
-  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+  // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
   const res = await fetch(`${API}/${id}`, {
     method: "PUT",
@@ -105,7 +109,7 @@ export async function deleteDeal(prevState: {
   type: string;
   message: string;
 }): Promise<{ id: string; type: string; message: string }> {
-  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+  // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
   const res = await fetch(`${API}/${prevState.id}`, {
     method: "DELETE",
