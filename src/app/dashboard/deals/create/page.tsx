@@ -7,7 +7,7 @@ import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Notify from '@/app/ui/notify';
 import React from 'react';
-import { Hotel } from '@/app/lib/definitions';
+import { CreateDealModel, Hotel } from '@/app/lib/definitions';
 
 const steps = ['Add Deal Details', 'Add Hotels'];
 
@@ -35,12 +35,12 @@ export default function Page() {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleReset = () => {
-        console.log(deal)
-    };
+    // const handleReset = () => {
+    //     console.log(deal)
+    // };
 
     //Deal and Hotels
-    const [deal, setDeal] = useState({
+    const [deal, setDeal] = useState<CreateDealModel>({
         slug: '',
         name: '',
         video: '',
