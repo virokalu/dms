@@ -77,7 +77,8 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
     };
 
     return (
-        <Box>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+            <Box sx={{ flex: '1' }} />
             <Box sx={{ width: '100%', maxWidth: 700 }}>
                 <Stepper activeStep={activeStep}>
                     {steps.map((label, index) => {
@@ -156,41 +157,47 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
 
                             <Box sx={{ pt: 2 }}>
                                 {deal.hotels.map((hotel, index) => (
-                                    <Grid container spacing={2} key={index}>
-                                        <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
-                                        <TextField
-                                            label="Name"
-                                            fullWidth
-                                            value={hotel.name}
-                                            onChange={(e) => handleHotelChange(index, 'name', e.target.value)}
-                                        />
-                                        <TextField
-                                            label="Rate"
-                                            type="number"
-                                            fullWidth
-                                            inputProps={{ step: 0.1, min: 0, max: 1 }}
-                                            value={hotel.rate}
-                                            onChange={(e) => handleHotelChange(index, 'rate', parseFloat(e.target.value))}
-                                        />
-                                        <TextField
-                                            label="Amenities"
-                                            fullWidth
-                                            value={hotel.amenities}
-                                            onChange={(e) => handleHotelChange(index, 'amenities', e.target.value)}
-                                        />
-                                        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                            <Box sx={{ flex: '1 1 auto' }} />
-                                            {hotel.id != '0' && index != 0 ? <DeleteHotel id={hotel.id} onDeleted={()=>handleHotelDeleted(hotel.id)} /> : null}
-                                        </Box>
-                                    </Grid>
+                                    <Box sx={{
+                                        borderWidth: 1,
+                                        borderRadius: 5,
+                                        borderColor: '#bdbdbd',
+                                        padding: 5,
+                                        marginBottom: 4
+                                    }}>
+                                        <Grid container spacing={2} key={index}>
+                                            <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
+                                            <TextField
+                                                label="Name"
+                                                fullWidth
+                                                value={hotel.name}
+                                                onChange={(e) => handleHotelChange(index, 'name', e.target.value)}
+                                            />
+                                            <TextField
+                                                label="Rate"
+                                                type="number"
+                                                fullWidth
+                                                inputProps={{ step: 0.1, min: 0, max: 1 }}
+                                                value={hotel.rate}
+                                                onChange={(e) => handleHotelChange(index, 'rate', parseFloat(e.target.value))}
+                                            />
+                                            <TextField
+                                                label="Amenities"
+                                                fullWidth
+                                                value={hotel.amenities}
+                                                onChange={(e) => handleHotelChange(index, 'amenities', e.target.value)}
+                                            />
+                                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width:'100%' }}>
+                                                <Box sx={{ flex: '1 1 auto' }} />
+                                                {index == deal.hotels.length - 1 ? <Button variant="outlined" onClick={addHotel}>Add Hotel</Button>: null}
+                                                {deal.hotels.length > 1 && hotel.id == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={removeHotel}>Remove Hotel {index+1}</Button> : null}
+                                                {hotel.id != '0' ? <DeleteHotel id={hotel.id} onDeleted={() => handleHotelDeleted(hotel.id)} /> : null}
+                                            </Box>
+                                        </Grid>
+                                    </Box>
                                 ))}
                             </Box>
 
-                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                                <Button variant="outlined" onClick={addHotel}>Add Hotel</Button>
-                                <Box sx={{ flex: '1 1 auto' }} />
-                                {deal.hotels.some(h => h.id == '0') ? <Button variant="outlined" color='warning' onClick={removeHotel}>Remove Hotel</Button> : null}
-                            </Box>
+
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 4 }}>
                                 <Button
@@ -211,6 +218,7 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
                     }
                 </form>
             </Box>
+            <Box sx={{ flex: '1' }} />
             {/* <form action={handleUpdate}>
                 <Box
                     sx={{

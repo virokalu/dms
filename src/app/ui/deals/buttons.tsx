@@ -44,7 +44,7 @@ export function DeleteHotel({ id, onDeleted }: { id: string; onDeleted: () => vo
         }
     }, [state, router])
     return (
-                <Button variant="outlined" color="error" onClick={() => startTransition(() => deleteHotelAction())} className="p-2 hover:bg-gray-100">
+                <Button sx={{ ml: 2 }} variant="outlined" color="error" onClick={() => startTransition(() => deleteHotelAction())} className="p-2 hover:bg-gray-100">
                     <span className="sr-only">Delete</span>
                     <DeleteIcon sx={{ color: pink[500] }} />
                 </Button>
