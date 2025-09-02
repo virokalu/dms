@@ -1,25 +1,60 @@
 'use client'
-import { Deal } from "@/app/lib/definitions";
+import { Deal, UpdateDealModel, UpdateHotelModel } from "@/app/lib/definitions";
 import { Box, Button, TextField } from "@mui/material";
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Notify from "../notify";
 import { updateDeal } from "@/app/lib/action";
 import { useRouter } from "next/navigation";
+import React from "react";
 
-export default function EditDeal({deal} : {deal: Deal}){
-    const [state, updateDealAction] = useActionState(updateDeal,{
-            type: "",
-            message: "",
-        });
-        const router = useRouter();
-        useEffect(() =>{  
-            Notify(state.type,state.message);
-            if(state.type=="success"){
-                router.back();
+export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
+    const [state, updateDealAction] = useActionState(updateDeal, {
+        type: "",
+        message: "",
+    });
+    const router = useRouter();
+    useEffect(() => {
+        Notify(state.type, state.message);
+        if (state.type == "success") {
+            router.back();
+        }
+    }, [state, router])
+
+    //React Stepper
+    const [activeStep, setActiveStep] = React.useState(0);
+
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleReset = () => {
+        console.log(deal)
+    };
+
+    //Deal and Hotels
+    const [deal, setDeal] = useState<UpdateDealModel>(sentDeal);
+
+    //Hotel Changes
+        const handleHotelChange = (index: number, field: keyof UpdateHotelModel, value: string | number) => {
+            const updatedHotels = [...deal.hotels];
+            if (field === 'name' || field === 'amenities') {
+                updatedHotels[index][field] = value as string;
+            } else if (field === 'rate') {
+                updatedHotels[index][field] = value as number;
             }
-        },[state, router])
-    return(
+            setDeal({ ...deal, hotels: updatedHotels });
+        };
+    
+        const addHotel = () => {
+            setDeal({ ...deal, hotels: [...deal.hotels, { id:'0', name: '', rate: 0, amenities: '' }] });
+        };
+
+    return (
         <Box>
             <form action={updateDealAction}>
                 <Box
