@@ -157,7 +157,7 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
 
                             <Box sx={{ pt: 2 }}>
                                 {deal.hotels.map((hotel, index) => (
-                                    <Box sx={{
+                                    <Box key={index} sx={{
                                         borderWidth: 1,
                                         borderRadius: 5,
                                         borderColor: '#bdbdbd',

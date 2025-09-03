@@ -7,16 +7,22 @@ import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Notify from '@/app/ui/notify';
 import React from 'react';
-import { CreateDealModel, Hotel } from '@/app/lib/definitions';
+import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
 const steps = ['Add Deal Details', 'Add Hotels'];
+
+import { yupResolver } from '@hookform/resolvers/yup';
+import { CreateDealModel, dealSchema } from '@/app/lib/definitions';
 
 export default function Page() {
     const [state, createDealAction] = useActionState(createDeal, {
         type: "",
         message: "",
     });
+
+    //Handle Notification
     const router = useRouter();
+    
     useEffect(() => {
         Notify(state.type, state.message);
         if (state.type == "success") {
@@ -27,74 +33,40 @@ export default function Page() {
     //React Stepper
     const [activeStep, setActiveStep] = React.useState(0);
 
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    const handleNext = async () => {
+        const isValid = await trigger(['slug', 'name', 'video']); // fields for step 1
+        if (isValid) setActiveStep((prev) => prev + 1);
     };
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    // const handleReset = () => {
-    //     console.log(deal)
-    // };
-
-    //Deal and Hotels
-    const [deal, setDeal] = useState<CreateDealModel>({
-        slug: '',
-        name: '',
-        video: '',
-        hotels: [
-            { name: '', rate: 0, amenities: '' }
-        ]
-    });
-
-    //Hotel Changes
-    const handleHotelChange = (index: number, field: keyof Hotel, value: string | number) => {
-        const updatedHotels = [...deal.hotels];
-        if (field === 'name' || field === 'amenities') {
-            updatedHotels[index][field] = value as string;
-        } else if (field === 'rate' || field === 'id') {
-            updatedHotels[index][field] = value as number;
-        }
-        setDeal({ ...deal, hotels: updatedHotels });
-    };
-
-    const addHotel = () => {
-        setDeal({ ...deal, hotels: [...deal.hotels, { name: '', rate: 0, amenities: '' }] });
-    };
-
-    const removeHotel = () => {
-        if (deal.hotels.length > 1) {
-            setDeal({ ...deal, hotels: deal.hotels.slice(0, -1) });
-        }
-    }
-
     //Handle Submission
-    const handleSubmit = async () => {
-        await createDealAction(deal);
-        // try {
-        //     const formData = new FormData();
-
-        //     // Add deal fields
-        //     formData.append('slug', deal.slug);
-        //     formData.append('name', deal.name);
-        //     formData.append('video', deal.video);
-
-        //     // Add hotel fields
-        //     deal.hotels.forEach((hotel, index) => {
-        //         formData.append(`hotels[${index}][name]`, hotel.name);
-        //         formData.append(`hotels[${index}][rate]`, hotel.rate.toString());
-        //         formData.append(`hotels[${index}][amenities]`, hotel.amenities);
-        //     });
-
-        //     // Send to your API
-        //     await createDealAction(formData);
-        // } catch (error) {
-        //     console.error(error);
-        // }
+    const onSubmit: SubmitHandler<CreateDealModel> = async (data) => {
+        await createDealAction(data);
     };
+    // const onError: SubmitErrorHandler<CreateDealModel> = (errors) => console.log(errors)
 
+    //ReactHookForm Yup Validation
+    const { control, trigger, handleSubmit, formState: {errors}} = useForm<CreateDealModel>(
+        {
+            resolver: yupResolver(dealSchema),
+            defaultValues: {
+                slug: '',
+                name: '',
+                video: '',
+                hotels: [
+                    { name: '', rate: 0, amenities: '' }
+                ]
+            }
+        }
+    );
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "hotels",
+    })
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
@@ -114,7 +86,7 @@ export default function Page() {
                         );
                     })}
                 </Stepper>
-                <form action={handleSubmit}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     {activeStep == 0 ? (<React.Fragment>
 
                         {/* Deal Text Feild Here */}
@@ -129,33 +101,49 @@ export default function Page() {
                                 pt: 2,
                             }}
                         >
-                            <TextField
-                                id="slug"
+                            <Controller
+                                control={control}
                                 name='slug'
-                                label="Slug"
-                                variant="outlined"
-                                required
-                                value={deal.slug}
-                                onChange={(e) => setDeal({ ...deal, slug: e.target.value })}
+                                render={({ field }) => (
+                                    <TextField
+                                        id="slug"
+                                        label="Slug"
+                                        variant="outlined"
+                                        {...field}
+                                        error={!!errors.slug}
+                                        helperText={errors.slug?.message}
+                                    />
+                                )}
                             />
 
-                            <TextField
-                                id="name"
+                            <Controller
+                                control={control}
                                 name='name'
-                                label="Name"
-                                variant="outlined"
-                                required
-                                value={deal.name}
-                                onChange={(e) => setDeal({ ...deal, name: e.target.value })}
+                                render={({ field }) => (
+                                    <TextField
+                                        id="name"
+                                        label="Name"
+                                        variant="outlined"
+                                        {...field}
+                                        error={!!errors.name}
+                                        helperText={errors.name?.message}
+                                    />
+                                )}
                             />
 
-                            <TextField
-                                id="video"
+                            <Controller
+                                control={control}
                                 name='video'
-                                label="Video URL"
-                                variant="outlined"
-                                value={deal.video}
-                                onChange={(e) => setDeal({ ...deal, video: e.target.value })}
+                                render={({ field }) => (
+                                    <TextField
+                                        id="video"
+                                        label="Video"
+                                        variant="outlined"
+                                        {...field}
+                                        error={!!errors.video}
+                                        helperText={errors.video?.message}
+                                    />
+                                )}
                             />
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
@@ -178,40 +166,62 @@ export default function Page() {
                             <Typography sx={{ pt: 4 }} variant="h6">New Hotels</Typography>
 
                             <Box sx={{ pt: 2 }}>
-                                {deal.hotels.map((hotel, index) => (
-                                    <Box sx={{
-                                        borderWidth:1,
+                                {fields.map((field, index) => (
+                                    <Box key={field.id} sx={{
+                                        borderWidth: 1,
                                         borderRadius: 5,
                                         borderColor: '#bdbdbd',
                                         padding: 5,
-                                        marginBottom:4                             
+                                        marginBottom: 4
                                     }}>
                                         <Grid container spacing={2} key={index}>
                                             <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
-                                            <TextField
-                                                label="Name"
-                                                fullWidth
-                                                value={hotel.name}
-                                                onChange={(e) => handleHotelChange(index, 'name', e.target.value)}
+                                            <Controller
+                                                control={control}
+                                                name={`hotels.${index}.name`}
+                                                render={({ field }) => (
+                                                    <TextField
+                                                        label="Name"
+                                                        fullWidth
+                                                        {...field}
+                                                        error={!!errors.hotels?.[index]?.name}
+                                                        helperText={errors.hotels?.[index]?.name?.message}
+                                                    />
+                                                )}
+
                                             />
-                                            <TextField
-                                                label="Rate"
-                                                type="number"
-                                                fullWidth
-                                                inputProps={{ step: 0.1, min: 0, max: 1 }}
-                                                value={hotel.rate}
-                                                onChange={(e) => handleHotelChange(index, 'rate', parseFloat(e.target.value))}
+                                            <Controller
+                                                control={control}
+                                                name={`hotels.${index}.rate`}
+                                                render={({ field }) => (
+                                                    <TextField
+                                                        label="Rate"
+                                                        type="number"
+                                                        fullWidth
+                                                        inputProps={{ step: 0.1, min: 0, max: 1 }}
+                                                        {...field}
+                                                        error={!!errors.hotels?.[index]?.rate}
+                                                        helperText={errors.hotels?.[index]?.rate?.message}
+                                                    />
+                                                )}
                                             />
-                                            <TextField
-                                                label="Amenities"
-                                                fullWidth
-                                                value={hotel.amenities}
-                                                onChange={(e) => handleHotelChange(index, 'amenities', e.target.value)}
+                                            <Controller
+                                                name={`hotels.${index}.amenities`}
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <TextField
+                                                        label="Amenities"
+                                                        fullWidth
+                                                        {...field}
+                                                        error={!!errors.hotels?.[index]?.amenities}
+                                                        helperText={errors.hotels?.[index]?.amenities?.message}
+                                                    />
+                                                )}
                                             />
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == deal.hotels.length - 1 ? <Button variant="outlined" onClick={addHotel}>Add Hotel</Button> : null}
-                                                {deal.hotels.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={removeHotel}>Remove Hotel {index+1}</Button> : null}
+                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={()=>append({name: '', rate: 0, amenities: ''})}>Add Hotel</Button> : null}
+                                                {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={()=>remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                             </Box>
                                         </Grid>
                                     </Box>
@@ -240,7 +250,7 @@ export default function Page() {
                 </form>
             </Box>
             <Box sx={{ flex: '1' }} />
-            
+
         </Box>
     );
 }
