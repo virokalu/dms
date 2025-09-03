@@ -11,7 +11,6 @@ import { DeleteHotel } from "./buttons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, useFieldArray, SubmitHandler, SubmitErrorHandler, Controller } from "react-hook-form";
 import * as yup from 'yup';
-import { fi } from "zod/locales";
 
 const steps = ['Update Deal Details', 'Update Hotels'];
 
@@ -76,46 +75,8 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
     };
     const onError: SubmitErrorHandler<UpdateDealModel> = (errors) => console.log("errors")
 
-
-    // const handleReset = () => {
-    //     console.log(deal)
-    // };
-
-    //Deal and Hotels
-    // const [deal, setDeal] = useState<UpdateDealModel>(sentDeal);
-
-    //Hotel Changes
-    // const handleHotelChange = (index: number, field: keyof UpdateHotelModel, value: string | number) => {
-    //     const updatedHotels = [...deal.hotels];
-    //     if (field === 'name' || field === 'amenities') {
-    //         updatedHotels[index][field] = value as string;
-    //     } else if (field === 'rate') {
-    //         updatedHotels[index][field] = value as number;
-    //     }
-    //     setDeal({ ...deal, hotels: updatedHotels });
-    // };
-
-    // const addHotel = () => {
-    //     setDeal({ ...deal, hotels: [...deal.hotels, { id: '0', name: '', rate: 0, amenities: '' }] });
-    // };
-
-    // const removeHotel = () => {
-    //     if (deal.hotels.length > 1) {
-    //         setDeal({ ...deal, hotels: deal.hotels.slice(0, -1) });
-    //     }
-    // }
-
-    // const handleUpdate = async () => {
-    //     await updateDealAction(deal);
-    // }
-
-    //Remove Hotel from Forms when Delete is Success
     const handleHotelDeleted = (deletedHotelId: number) => {
-        // setDeal(deal => ({
-        //     ...deal,
-        //     hotels: deal.hotels.filter(h => h.id !== deletedHotelId),
-        // }));
-        // console.log(deal)
+        
         remove(deletedHotelId)
     };
 
