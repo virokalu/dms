@@ -11,8 +11,22 @@ import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-fo
 
 const steps = ['Add Deal Details', 'Add Hotels'];
 
+import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CreateDealModel, dealSchema } from '@/app/lib/definitions';
+import { CreateDealModel } from '@/app/lib/definitions';
+
+const dealSchema = yup.object().shape({
+    slug: yup.string().required('Slug is required'),
+    name: yup.string().required('Name is required'),
+    video: yup.string().url('Must be a valid URL').required('Video URL is required'),
+    hotels: yup.array().of(
+        yup.object().shape({
+            name: yup.string().required('Hotel name is required'),
+            rate: yup.number().typeError('Rate is a number between 0 and 1').min(0).max(1).required('Rate is required'),
+            amenities: yup.string().required('Amenities is required'),
+        })
+    ).min(1, "At least one Hotel required").required(),
+});
 
 export default function Page() {
     const [state, createDealAction] = useActionState(createDeal, {
@@ -176,6 +190,7 @@ export default function Page() {
                                     }}>
                                         <Grid container spacing={2} key={index}>
                                             <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
+                                            
                                             <Controller
                                                 control={control}
                                                 name={`hotels.${index}.name`}
