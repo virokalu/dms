@@ -14,20 +14,6 @@ import * as yup from 'yup';
 
 const steps = ['Update Deal Details', 'Update Hotels'];
 
-const dealSchema = yup.object().shape({
-    id: yup.string().required(),
-    slug: yup.string().required('Slug is required'),
-    name: yup.string().required('Name is required'),
-    video: yup.string().url('Must be a valid URL').required('Video URL is required'),
-    hotels: yup.array().of(
-        yup.object().shape({
-            id: yup.string().required(),
-            name: yup.string().required('Hotel name is required'),
-            rate: yup.number().typeError('Rate is a number between 0 and 1').min(0).max(1).required('Rate is required'),
-            amenities: yup.string().required('Amenities is required'),
-        })
-    ).min(1, "At least one Hotel required").required(),
-});
 export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
     const [state, updateDealAction] = useActionState(updateHotelDeal, {
         type: "",
@@ -44,9 +30,8 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
     }, [state, router])
 
     //ReactHookForm Yup Validation
-    const { control, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
+    const { control,register, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
         {
-            resolver: yupResolver(dealSchema),
             defaultValues: sentDeal
         }
     );
@@ -59,7 +44,7 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
     const [activeStep, setActiveStep] = React.useState(0);
 
     const handleNext = async () => {
-        const isValid = await trigger(['slug', 'name', 'video']); //Validate Feils in Deal
+        const isValid = await trigger(['slug', 'name', 'video']); //Validate Fields in Deal
         if(isValid){
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
         }
@@ -113,50 +98,41 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
                                 pt: 2,
                             }}
                         >
-                            <Controller
-                                control={control}
-                                name='slug'
-                                render={({ field }) => (
-                                    <TextField
-                                        id="slug"
-                                        label="Slug"
-                                        {...field}
-                                        error={!!errors.slug}
-                                        helperText={errors.slug?.message}
-                                    />
-                                )}
+                            <input
+                                className='text_input'
+                                placeholder='Slug...'
+                                {...register("slug", {
+                                    required: true,
+                                })}
                             />
+                            {errors?.slug?.type === "required" && (
+                                <p className='error_msg'>Slug is required !</p>
+                            )}
 
-                            <Controller
-                                control={control}
-                                name='name'
-                                render={({ field }) => (
-                                    <TextField
-                                        id="name"
-                                        label="Name"
-                                        variant="outlined"
-                                        {...field}
-                                        error={!!errors.name}
-                                        helperText={errors.name?.message}
-                                    />
-                                )}
+                            <input
+                                className='text_input'
+                                placeholder='Name...'
+                                {...register("name", {
+                                    required: true,
+                                    pattern: /^[A-Za-z\s]+$/i
+                                })}
                             />
+                            {errors?.name?.type === "required" && (
+                                <p className='error_msg'>Name is required !</p>
+                            )}
+                            {errors?.name?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
 
-                            <Controller
-                                control={control}
-                                name='video'
-                                render={({ field }) => (
-                                    <TextField
-                                        id="video"
-                                        label="Video URL"
-                                        variant="outlined"
-                                        {...field}
-                                        error={!!errors.video}
-                                        helperText={errors.video?.message}
-                                    />
-                                )}
-
+                            <input
+                                className='text_input'
+                                placeholder='Video URL...'
+                                {...register("video", {
+                                    required: false,
+                                    pattern: /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6}\.?)(\/[\w.-]*)*\/?$/
+                                })}
                             />
+                            {errors?.video?.type === "pattern" && (
+                                <p className='error_msg'>URL links only !</p>
+                            )}
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 <Link href={'/dashboard/deals'}>
@@ -187,61 +163,53 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
                                         <Grid container spacing={2} key={index}>
                                             <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
                                             
-                                            <Controller
-                                                control={control}
-                                                name={`hotels.${index}.id`}
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        fullWidth
-                                                        {...field}
-                                                        hidden
-                                                        error={!!errors.hotels?.[index]?.name}
-                                                        helperText={errors.hotels?.[index]?.name?.message}
-                                                    />
-                                                )}
+                                            <input
+                                                className='text_input'
+                                                placeholder='Hotel Name...'
+                                                {...register(`hotels.${index}.name`, {
+                                                    required: true,
+                                                    pattern: /^[A-Za-z]+$/i
+                                                })}
                                             />
-                                            
-                                            <Controller
-                                                control={control}
-                                                name={`hotels.${index}.name`}
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        label="Name"
-                                                        fullWidth
-                                                        {...field}
-                                                        error={!!errors.hotels?.[index]?.name}
-                                                        helperText={errors.hotels?.[index]?.name?.message}
-                                                    />
-                                                )}
+                                            {errors?.hotels?.[index]?.name?.type === "required" && (
+                                                <p className='error_msg'>Hotel Name is required !</p>
+                                            )}
+                                            {errors?.hotels?.[index]?.name?.type === "pattern" && (
+                                                <p className='error_msg'>Alphabetical characters only !</p>
+                                            )}
+
+                                            <input
+                                                step='0.1'
+                                                className='text_input'
+                                                type='number'
+                                                placeholder='Rate...'
+                                                {...register(`hotels.${index}.rate`, {
+                                                    required: true,
+                                                    min: 0,
+                                                    max: 1,
+                                                })}
                                             />
-                                            <Controller
-                                                control={control}
-                                                name={`hotels.${index}.rate`}
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        label="Rate"
-                                                        type="number"
-                                                        fullWidth
-                                                        inputProps={{ step: 0.1, min: 0, max: 1 }}
-                                                        {...field}
-                                                        error={!!errors.hotels?.[index]?.rate}
-                                                        helperText={errors.hotels?.[index]?.rate?.message}
-                                                    />
-                                                )}
+                                            {errors?.hotels?.[index]?.rate?.type === "required" && (
+                                                <p className='error_msg'>Rate is required !</p>
+                                            )}
+                                            {(errors?.hotels?.[index]?.rate?.type === "max" || errors?.hotels?.[index]?.rate?.type === "min") && (
+                                                <p className='error_msg'>Rate is a number between 0 and 1 !</p>
+                                            )}
+
+                                            <input
+                                                className='text_input'
+                                                placeholder='Amenities...'
+                                                {...register(`hotels.${index}.amenities`, {
+                                                    required: true,
+                                                    pattern: /^(\w+(,\s*\w+)*)?$/
+                                                })}
                                             />
-                                            <Controller
-                                                control={control}
-                                                name={`hotels.${index}.amenities`}
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        label="Amenities"
-                                                        fullWidth
-                                                        {...field}
-                                                        error={!!errors.hotels?.[index]?.amenities}
-                                                        helperText={errors.hotels?.[index]?.amenities?.message}
-                                                    />
-                                                )}
-                                            />
+                                            {errors?.hotels?.[index]?.amenities?.type === "required" && (
+                                                <p className='error_msg'>Amenities is required !</p>
+                                            )}
+                                            {errors?.hotels?.[index]?.amenities?.type === "pattern" && (
+                                                <p className='error_msg'>Comma-separated list of amenities only !</p>
+                                            )}
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
                                                 {index == fields.length - 1 ? <Button variant="outlined" onClick={()=>append({id: '0',name: '', rate: 0, amenities: ''})}>Add Hotel</Button> : null}

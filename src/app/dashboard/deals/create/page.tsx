@@ -115,7 +115,7 @@ export default function Page() {
                                 placeholder='Name...'
                                 {...register("name", {
                                     required: true,
-                                    pattern: /^[A-Za-z]+$/i
+                                    pattern: /^[A-Za-z\s]+$/i
                                 })}
                             />
                             {errors?.name?.type === "required" && (
@@ -182,6 +182,7 @@ export default function Page() {
                                             )}
 
                                             <input
+                                                step='0.1'
                                                 className='text_input'
                                                 type='number'
                                                 placeholder='Rate...'
