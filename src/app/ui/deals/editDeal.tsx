@@ -99,6 +99,7 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
                             }}
                         >
                             <input
+                            readOnly
                                 className='text_input'
                                 placeholder='Slug...'
                                 {...register("slug", {
