@@ -9,6 +9,7 @@ export type CreateDealModel = {
     slug: string;
     name: string;
     video: string;
+    imageFile: File | null;
     hotels: Hotel[];
 }
 export type Hotel = {
@@ -27,5 +28,7 @@ export type UpdateDealModel = {
     slug: string;
     name: string;
     video: string;
+    image: string;
+    imageFile: File | null;
     hotels: UpdateHotelModel[];
 }

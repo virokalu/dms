@@ -21,7 +21,7 @@ export async function createDeal(
     type: string;
     message: string;
   },
-  data: CreateDealModel
+  data: FormData
 ): Promise<{ type: string; message: string }> {
   // const { slug, name, video } = CreateDeal.parse({
   //   slug: formData.get("slug"),
@@ -43,8 +43,7 @@ export async function createDeal(
 
   const res = await fetch(`${API}`, {
     method: "POST",
-    body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" },
+    body: data,
   });
   if (!res.ok) {
     const msg = (await res.text()).split("\n").join(",");

@@ -24,6 +24,7 @@ export default function Page() {
 
     useEffect(() => {
         Notify(state.type, state.message);
+        console.log(state.message)
         if (state.type == "success") {
             router.back();
         }
@@ -32,28 +33,51 @@ export default function Page() {
     //React Stepper
     const [activeStep, setActiveStep] = React.useState(0);
 
+    //Handle Image
+    const [imageFile, setImageFile] = useState<File | null>(null);
+
     const handleNext = async () => {
-        const isValid = await trigger(['slug', 'name', 'video'], { shouldFocus: true }); // fields for step 1
+        const isValid = await trigger(['slug', 'name', 'video', 'imageFile'], { shouldFocus: true }); // fields for step 1
+        console.log(imageFile?.name);
+
         if (isValid) setActiveStep((prev) => prev + 1);
     };
 
     const handleBack = () => {
+        setValue('imageFile', imageFile);
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
     //Handle Submission
     const onSubmit: SubmitHandler<CreateDealModel> = async (data) => {
-        await createDealAction(data);
+        const formData = new FormData();
+
+        formData.append("slug", data.slug);
+        formData.append("name", data.name);
+        formData.append("video", data.video || '');
+        if(imageFile){
+            formData.append("imageFile", imageFile);
+        }
+
+        data.hotels.forEach((hotel, index) => {
+            formData.append(`hotels[${index}].name`, hotel.name);
+            formData.append(`hotels[${index}].rate`, hotel.rate.toString());
+            formData.append(`hotels[${index}].amenities`, hotel.amenities);
+        });
+
+
+        await createDealAction(formData);
     };
     // const onError: SubmitErrorHandler<CreateDealModel> = (errors) => console.log(errors)
 
     //ReactHookForm Yup Validation
-    const { control, register, trigger, handleSubmit, formState: { errors } } = useForm<CreateDealModel>(
+    const { control, register, trigger, handleSubmit, setValue, formState: { errors } } = useForm<CreateDealModel>(
         {
             defaultValues: {
                 slug: '',
                 name: '',
                 video: '',
+                imageFile: imageFile,
                 hotels: [
                     { name: '', rate: 0, amenities: '' }
                 ]
@@ -133,6 +157,18 @@ export default function Page() {
                             />
                             {errors?.video?.type === "pattern" && (
                                 <p className='error_msg'>URL links only !</p>
+                            )}
+
+                            <input type='file'
+                                {...register('imageFile', {
+                                    required: true,
+                                })}
+                                onChange={(e) => {
+                                    setImageFile(e.target.files?.[0] ?? null);
+                                }}
+                            />
+                            {errors?.imageFile?.type === "required" && (
+                                <p className='error_msg'>Image is required !</p>
                             )}
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>

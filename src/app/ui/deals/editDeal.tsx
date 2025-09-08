@@ -8,9 +8,7 @@ import { updateHotelDeal } from "@/app/lib/action";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { DeleteHotel } from "./buttons";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, useFieldArray, SubmitHandler, SubmitErrorHandler, Controller } from "react-hook-form";
-import * as yup from 'yup';
 
 const steps = ['Update Deal Details', 'Update Hotels'];
 
