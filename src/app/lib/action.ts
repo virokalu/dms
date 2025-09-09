@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { UpdateDealModel } from "./definitions";
+import { Deal, ImageFile, UpdateDealModel } from "./definitions";
 
 const API = new URL(`${process.env.API_URL}api/deal`);
 const Hotel_API = new URL(`${process.env.API_URL}api/hotel`);
@@ -169,6 +169,37 @@ export async function deleteDeal(prevState: {
       id: prevState.id,
       type: "success",
       message: "Deal deleted successfully",
+    };
+  }
+}
+
+export async function updateImage(prevState: {
+    type: string;
+    message: string;
+  },
+  data: ImageFile
+): Promise<{ type: string; message: string }> {
+
+  //Create FormData
+  const formData = new FormData();
+  formData.append("imageFile", data.imageFile);
+  
+  const res = await fetch(`${API}/img/${data.id}`, {
+    method: "PUT",
+    body: formData,
+  });
+  if (!res.ok) {
+    const msg = (await res.text()).split("\n").join(",");
+    return {
+      type: "error",
+      message: `${msg}`,
+    };
+  } else {
+    const deal: Deal = await res.json();
+    revalidatePath(`/dashboard/deals/${deal.slug}/edit`);
+    return {
+      type: "success",
+      message: "Image updated successfully",
     };
   }
 }

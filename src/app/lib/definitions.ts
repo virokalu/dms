@@ -32,3 +32,7 @@ export type UpdateDealModel = {
     image: string;
     hotels: UpdateHotelModel[];
 }
+export type ImageFile = {
+    id:string;
+    imageFile:File;
+}
