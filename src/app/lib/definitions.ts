@@ -10,6 +10,7 @@ export type CreateDealModel = {
     name: string;
     video: string;
     imageFile: File | null;
+    image:string;
     hotels: Hotel[];
 }
 export type Hotel = {

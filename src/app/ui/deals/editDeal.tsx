@@ -12,7 +12,7 @@ import { useForm, useFieldArray, SubmitHandler, SubmitErrorHandler, Controller }
 
 const steps = ['Update Deal Details', 'Update Hotels'];
 
-export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
+export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel, API: string }) {
     const [state, updateDealAction] = useActionState(updateHotelDeal, {
         type: "",
         message: "",
@@ -27,8 +27,11 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
         }
     }, [state, router])
 
+    //Handle Image
+    const [imageFile, setImageFile] = useState<File | null>(null);
+
     //ReactHookForm Yup Validation
-    const { control,register, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
+    const { control,register,setValue, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
         {
             defaultValues: sentDeal
         }
@@ -54,12 +57,28 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
 
     //Handle Submission
     const onSubmit: SubmitHandler<UpdateDealModel> = async (data) => {
+        const formData = new FormData();
+
+        formData.append("id", data.id);
+        formData.append("slug", data.slug);
+        formData.append("name", data.name);
+        formData.append("video", data.video || '');
+        if(imageFile){
+            formData.append("imageFile", imageFile);
+        }
+
+        data.hotels.forEach((hotel, index) => {
+            formData.append(`hotels[${index}].id`, hotel.id);
+            formData.append(`hotels[${index}].name`, hotel.name);
+            formData.append(`hotels[${index}].rate`, hotel.rate.toString());
+            formData.append(`hotels[${index}].amenities`, hotel.amenities);
+        });
+
         await updateDealAction(data);
     };
     const onError: SubmitErrorHandler<UpdateDealModel> = (errors) => console.log("errors")
 
     const handleHotelDeleted = (deletedHotelId: number) => {
-        
         remove(deletedHotelId)
     };
 
@@ -132,6 +151,20 @@ export default function EditDeal({ sentDeal }: { sentDeal: UpdateDealModel }) {
                             {errors?.video?.type === "pattern" && (
                                 <p className='error_msg'>URL links only !</p>
                             )}
+
+                            {sentDeal.image?<img width={300} src={`${API}/${sentDeal.image}`}/>:<p>No Image to View</p>}                        
+
+                            <span><b>Update the Image</b></span>
+                            <input
+                                type='file'
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0] ?? null
+                                    setImageFile(file);
+                                    // if(file){
+                                    //     sentDeal.image = URL.createObjectURL(file)
+                                    // }
+                                }}
+                            />
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 <Link href={'/dashboard/deals'}>

@@ -37,7 +37,7 @@ export default function Page() {
     const [imageFile, setImageFile] = useState<File | null>(null);
 
     const handleNext = async () => {
-        const isValid = await trigger(['slug', 'name', 'video', 'imageFile'], { shouldFocus: true }); // fields for step 1
+        const isValid = await trigger(['slug', 'name', 'video', 'image'], { shouldFocus: true }); // fields for step 1
         console.log(imageFile?.name);
 
         if (isValid) setActiveStep((prev) => prev + 1);
@@ -71,7 +71,7 @@ export default function Page() {
     // const onError: SubmitErrorHandler<CreateDealModel> = (errors) => console.log(errors)
 
     //ReactHookForm Yup Validation
-    const { control, register, trigger, handleSubmit, setValue, formState: { errors } } = useForm<CreateDealModel>(
+    const { control, register, trigger, handleSubmit, setValue, watch, formState: { errors } } = useForm<CreateDealModel>(
         {
             defaultValues: {
                 slug: '',
@@ -158,16 +158,23 @@ export default function Page() {
                             {errors?.video?.type === "pattern" && (
                                 <p className='error_msg'>URL links only !</p>
                             )}
-
+                            {watch('image')?<img width={300} src={watch('image')}/>:<p>No Image to View</p>}
                             <input type='file'
-                                {...register('imageFile', {
-                                    required: true,
-                                })}
                                 onChange={(e) => {
-                                    setImageFile(e.target.files?.[0] ?? null);
+                                    const file = e.target.files?.[0]
+                                    setImageFile(file ?? null);
+                                    if(file){
+                                        setValue('image',URL.createObjectURL(file))
+                                    }
                                 }}
                             />
-                            {errors?.imageFile?.type === "required" && (
+                            <input
+                                hidden
+                                {...register("image", {
+                                    required: true,
+                                })}
+                            />
+                            {errors?.image?.type === "required" && (
                                 <p className='error_msg'>Image is required !</p>
                             )}
 

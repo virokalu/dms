@@ -3,8 +3,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { CreateDealModel, UpdateDealModel } from "./definitions";
 
-const API = new URL(`${process.env.API_URL}`);
-const Hotel_API = new URL(`${process.env.HOTEL_URL}`);
+const API = new URL(`${process.env.API_URL}api/deal`);
+const Hotel_API = new URL(`${process.env.API_URL}api/hotel`);
 
 const FormSchema = z.object({
   id: z.string(),

@@ -1,6 +1,6 @@
 import { Deal, UpdateDealModel } from "./definitions";
 
-const API = new URL(`${process.env.API_URL}`);
+const API = new URL(`${process.env.API_URL}api/deal`);
 
 export async function fetchDeals() {
   try {
