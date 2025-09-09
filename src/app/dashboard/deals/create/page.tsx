@@ -1,13 +1,12 @@
 'use client'
-import TextField from '@mui/material/TextField'
-import { Box, Button, Grid, Step, StepLabel, Stepper, Typography } from '@mui/material'
+import { Box, Button, Grid, Stack, Step, StepLabel, Stepper, Typography } from '@mui/material'
 import Link from 'next/link';
 import { createDeal } from '@/app/lib/action';
-import { useActionState, useEffect, useState } from 'react';
+import { startTransition, useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Notify from '@/app/ui/notify';
 import React from 'react';
-import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
 const steps = ['Add Deal Details', 'Add Hotels'];
 
@@ -35,16 +34,17 @@ export default function Page() {
 
     //Handle Image
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const [videoFile, setVideoFile] = useState<File | null>(null);
 
     const handleNext = async () => {
-        const isValid = await trigger(['slug', 'name', 'video', 'image'], { shouldFocus: true }); // fields for step 1
-        console.log(imageFile?.name);
+        const isValid = await trigger(['slug', 'name', 'video.path', 'image', 'video.alt'], { shouldFocus: true }); // fields for step 1
+        // console.log(imageFile?.name);
 
         if (isValid) setActiveStep((prev) => prev + 1);
     };
 
     const handleBack = () => {
-        setValue('imageFile', imageFile);
+        // setValue('imageFile', imageFile);
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
@@ -54,19 +54,21 @@ export default function Page() {
 
         formData.append("slug", data.slug);
         formData.append("name", data.name);
-        formData.append("video", data.video || '');
-        if(imageFile){
+        formData.append('video.alt', data.video.alt);
+        if (imageFile) {
             formData.append("imageFile", imageFile);
         }
-
+        if (videoFile) {
+            formData.append("videoFile", videoFile)
+        }
         data.hotels.forEach((hotel, index) => {
             formData.append(`hotels[${index}].name`, hotel.name);
             formData.append(`hotels[${index}].rate`, hotel.rate.toString());
             formData.append(`hotels[${index}].amenities`, hotel.amenities);
         });
-
-
-        await createDealAction(formData);
+        startTransition(() => {
+            createDealAction(formData);
+        })
     };
     // const onError: SubmitErrorHandler<CreateDealModel> = (errors) => console.log(errors)
 
@@ -76,7 +78,10 @@ export default function Page() {
             defaultValues: {
                 slug: '',
                 name: '',
-                video: '',
+                video: {
+                    alt: '',
+                    path: '',
+                },
                 imageFile: imageFile,
                 hotels: [
                     { name: '', rate: 0, amenities: '' }
@@ -147,7 +152,7 @@ export default function Page() {
                             )}
                             {errors?.name?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
 
-                            <input
+                            {/* <input
                                 className='text_input'
                                 placeholder='Video URL...'
                                 {...register("video", {
@@ -157,14 +162,14 @@ export default function Page() {
                             />
                             {errors?.video?.type === "pattern" && (
                                 <p className='error_msg'>URL links only !</p>
-                            )}
-                            {watch('image')?<img width={300} src={watch('image')}/>:<p>No Image to View</p>}
+                            )} */}
+                            {watch('image') ? <img width={300} src={watch('image')} /> : <p>No Image to View</p>}
                             <input type='file'
                                 onChange={(e) => {
                                     const file = e.target.files?.[0]
                                     setImageFile(file ?? null);
-                                    if(file){
-                                        setValue('image',URL.createObjectURL(file))
+                                    if (file) {
+                                        setValue('image', URL.createObjectURL(file))
                                     }
                                 }}
                             />
@@ -177,6 +182,54 @@ export default function Page() {
                             {errors?.image?.type === "required" && (
                                 <p className='error_msg'>Image is required !</p>
                             )}
+
+                            <Typography sx={{ pt: 4 }} variant="h6">New Video</Typography>
+
+                            <Box sx={{
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                borderColor: '#bdbdbd',
+                                padding: 5,
+                                marginBottom: 4,
+                                gap: '16px'
+                            }}>
+                                <Stack spacing={4}>
+                                    <input
+                                        className='text_input'
+                                        placeholder='Alt...'
+                                        {...register("video.alt", {
+                                            required: true,
+                                            pattern: /^[A-Za-z\s]+$/i
+                                        })}
+                                    />
+
+                                    {errors?.video?.alt?.type === "required" && (
+                                        <p className='error_msg'>Alt is required !</p>
+                                    )}
+                                    {errors?.video?.alt?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
+
+                                    {watch('video.path') ? <video autoPlay width={300} src={watch('video.path')} /> : <p>No Video to View</p>}
+
+                                    <input type='file'
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0]
+                                            setVideoFile(file ?? null);
+                                            if (file) {
+                                                setValue('video.path', URL.createObjectURL(file))
+                                            }
+                                        }}
+                                    />
+                                    <input
+                                        hidden
+                                        {...register("video.path", {
+                                            required: true,
+                                        })}
+                                    />
+                                    {errors?.video?.path?.type === "required" && (
+                                        <p className='error_msg'>Video is required !</p>
+                                    )}
+                                </Stack>
+                            </Box>
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 <Link href={'/dashboard/deals'}>

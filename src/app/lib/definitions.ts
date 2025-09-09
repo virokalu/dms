@@ -17,6 +17,7 @@ export type CreateDealModel = {
 
 export type Video = {
     alt: string,
+    path: string;
 }
 
 export type UpdateVideoModel = {

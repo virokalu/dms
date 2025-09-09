@@ -38,7 +38,7 @@ export async function createDeal(
   //   ]
   // };
 
-  // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
   console.log(data);
 
   const res = await fetch(`${API}`, {
