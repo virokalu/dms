@@ -39,7 +39,7 @@ export async function createDeal(
   // };
 
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
-  console.log(data);
+  // console.log(data);
 
   const res = await fetch(`${API}`, {
     method: "POST",
@@ -190,7 +190,33 @@ export async function updateImage(data: ImageFile){
     };
   } else {
     const deal: Deal = await res.json();
-    revalidatePath(`/dashboard/deals/${deal.slug}/edit`);
+    // revalidatePath(`/dashboard/deals/${deal.slug}/edit`);
+    return {
+      type: "success",
+      message: "Image updated successfully",
+    };
+  }
+}
+
+
+export async function updateVideo(data: ImageFile){
+  //Create FormData
+  const formData = new FormData();
+  formData.append("imageFile", data.imageFile);
+  
+  const res = await fetch(`${API}/video/${data.id}`, {
+    method: "PUT",
+    body: formData,
+  });
+  if (!res.ok) {
+    const msg = (await res.text()).split("\n").join(",");
+    return {
+      type: "error",
+      message: `${msg}`,
+    };
+  } else {
+    const deal: Deal = await res.json();
+    // revalidatePath(`/dashboard/deals/${deal.slug}/edit`);
     return {
       type: "success",
       message: "Image updated successfully",
