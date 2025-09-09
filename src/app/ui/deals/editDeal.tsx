@@ -136,7 +136,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
                         {/* Deal Text Feild Here */}
 
-                        <Typography sx={{ pt: 4 }} variant="h6">New Deal Details</Typography>
+                        <Typography sx={{ pt: 4 }} variant="h6">Update Deal Details</Typography>
                         <Box
                             sx={{
                                 minWidth: 500,
@@ -200,6 +200,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 }}
                             />
 
+                            <Typography sx={{ pt: 4 }} variant="h6">Update Video</Typography>
                             <Box sx={{
                                 borderWidth: 1,
                                 borderRadius: 5,
