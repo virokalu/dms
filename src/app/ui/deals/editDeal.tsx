@@ -225,7 +225,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                     )}
                                     {errors?.video?.alt?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
 
-                                    {watch('video.path') ? <video autoPlay width={300} src={`${API}/${watch('video.path')}`} /> : <p>No Video to View</p>}
+                                    {watch('video.path') ? <video autoPlay loop width={300} src={`${API}/${watch('video.path')}`} /> : <p>No Video to View</p>}
 
                                     <span><b>Update the Video</b></span>
 
