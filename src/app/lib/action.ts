@@ -173,13 +173,7 @@ export async function deleteDeal(prevState: {
   }
 }
 
-export async function updateImage(prevState: {
-    type: string;
-    message: string;
-  },
-  data: ImageFile
-): Promise<{ type: string; message: string }> {
-
+export async function updateImage(data: ImageFile){
   //Create FormData
   const formData = new FormData();
   formData.append("imageFile", data.imageFile);

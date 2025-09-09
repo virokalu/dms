@@ -1,10 +1,10 @@
 'use client'
-import { UpdateDealModel } from "@/app/lib/definitions";
+import { UpdateDealModel, ImageFile } from "@/app/lib/definitions";
 import { Box, Button, Grid, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import Link from "next/link";
-import { useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import Notify from "../notify";
-import { updateHotelDeal } from "@/app/lib/action";
+import { updateHotelDeal, updateImage } from "@/app/lib/action";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { DeleteHotel } from "./buttons";
@@ -18,25 +18,37 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
         message: "",
     });
 
+    // const [imgstate, updateImageAction] = useActionState(updateImage, {
+    //     type: "",
+    //     message: "",
+    // });
+
     //Handle Image
     // const [imageFile, setImageFile] = useState<File | null>(null);
     // const [imageLink, setImageLink] = useState<string | null>(null);
 
     //Handle Notification
-    const router = useRouter();
+    const {back, refresh} = useRouter();
     useEffect(() => {
 
+        console.log(watch('image'))
         // if(sentDeal.image)
         //     setImageLink(`${API}/${sentDeal.image}`);
 
         Notify(state.type, state.message);
+        // Notify(imgstate.type, imgstate.message);
         if (state.type == "success") {
-            router.back();
+            back();
         }
-    }, [state, router])
+        // if (imgstate.type == "success") {
+        //     window.location.reload();
+        //     // push(`deals/${watch('slug')}/edit`)
+        //     // console.log(watch('image'))
+        // }
+    }, [state])
 
     //ReactHookForm Yup Validation
-    const { control,register,setValue, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
+    const { control,register, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
         {
             defaultValues: sentDeal
         }
@@ -61,13 +73,30 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     };
 
     //Handle Submission
-    const onSubmit: SubmitHandler<UpdateDealModel> = async (data) => {
-        await updateDealAction(data);
+    const onSubmit: SubmitHandler<UpdateDealModel> = (data) => {
+        startTransition(() =>{
+            updateDealAction(data);
+        })
     };
     const onError: SubmitErrorHandler<UpdateDealModel> = (errors) => console.log("errors")
 
+    //Handle Delete
     const handleHotelDeleted = (deletedHotelId: number) => {
         remove(deletedHotelId)
+    };
+
+    //HandleImageEdit
+    const handleImageEdit = async (file: File)=>{
+        const imageFile : ImageFile = {
+            id: watch('id'),
+            imageFile: file,
+        }
+        const res = await updateImage(imageFile);
+        if(res.type == "success"){
+            window.location.reload();
+        }else{
+            Notify(res.type, res.message);
+        }
     };
 
     return (
@@ -151,10 +180,9 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 type='file'
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] ?? null
-                                    // setImageFile(file);
-                                    // if(file){
-                                    //     setImageLink(`${URL.createObjectURL(file)}`);
-                                    // }
+                                    if(file){
+                                        handleImageEdit(file)
+                                    }
                                 }}
                             />
 
