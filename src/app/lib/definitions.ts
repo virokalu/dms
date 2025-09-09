@@ -30,6 +30,5 @@ export type UpdateDealModel = {
     name: string;
     video: string;
     image: string;
-    imageFile: File | null;
     hotels: UpdateHotelModel[];
 }

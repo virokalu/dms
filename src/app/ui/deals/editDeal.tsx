@@ -18,17 +18,22 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
         message: "",
     });
 
+    //Handle Image
+    // const [imageFile, setImageFile] = useState<File | null>(null);
+    // const [imageLink, setImageLink] = useState<string | null>(null);
+
     //Handle Notification
     const router = useRouter();
     useEffect(() => {
+
+        // if(sentDeal.image)
+        //     setImageLink(`${API}/${sentDeal.image}`);
+
         Notify(state.type, state.message);
         if (state.type == "success") {
             router.back();
         }
     }, [state, router])
-
-    //Handle Image
-    const [imageFile, setImageFile] = useState<File | null>(null);
 
     //ReactHookForm Yup Validation
     const { control,register,setValue, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
@@ -57,23 +62,6 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
     //Handle Submission
     const onSubmit: SubmitHandler<UpdateDealModel> = async (data) => {
-        const formData = new FormData();
-
-        formData.append("id", data.id);
-        formData.append("slug", data.slug);
-        formData.append("name", data.name);
-        formData.append("video", data.video || '');
-        if(imageFile){
-            formData.append("imageFile", imageFile);
-        }
-
-        data.hotels.forEach((hotel, index) => {
-            formData.append(`hotels[${index}].id`, hotel.id);
-            formData.append(`hotels[${index}].name`, hotel.name);
-            formData.append(`hotels[${index}].rate`, hotel.rate.toString());
-            formData.append(`hotels[${index}].amenities`, hotel.amenities);
-        });
-
         await updateDealAction(data);
     };
     const onError: SubmitErrorHandler<UpdateDealModel> = (errors) => console.log("errors")
@@ -115,8 +103,10 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 pt: 2,
                             }}
                         >
+                            <label htmlFor="slug">Slug</label>
                             <input
                             readOnly
+                            id="slug"
                                 className='text_input'
                                 placeholder='Slug...'
                                 {...register("slug", {
@@ -126,9 +116,10 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                             {errors?.slug?.type === "required" && (
                                 <p className='error_msg'>Slug is required !</p>
                             )}
-
+                            <label htmlFor="name">Name</label>
                             <input
                                 className='text_input'
+                                id="name"
                                 placeholder='Name...'
                                 {...register("name", {
                                     required: true,
@@ -139,7 +130,8 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 <p className='error_msg'>Name is required !</p>
                             )}
                             {errors?.name?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
-
+                            
+                            <label htmlFor="name">Video</label>
                             <input
                                 className='text_input'
                                 placeholder='Video URL...'
@@ -152,23 +144,23 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 <p className='error_msg'>URL links only !</p>
                             )}
 
-                            {sentDeal.image?<img width={300} src={`${API}/${sentDeal.image}`}/>:<p>No Image to View</p>}                        
+                            {watch('image')?<img width={300} src={`${API}/${watch('image')}`}/>:<p>No Image to View</p>}                        
 
                             <span><b>Update the Image</b></span>
                             <input
                                 type='file'
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] ?? null
-                                    setImageFile(file);
+                                    // setImageFile(file);
                                     // if(file){
-                                    //     sentDeal.image = URL.createObjectURL(file)
+                                    //     setImageLink(`${URL.createObjectURL(file)}`);
                                     // }
                                 }}
                             />
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 <Link href={'/dashboard/deals'}>
-                                    <Button variant="outlined" className='px-4'>Cancel</Button>
+                                    <Button variant="outlined" className='px-4'>Back</Button>
                                 </Link>
                                 <Box sx={{ flex: '1 1 auto' }} />
 

@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { CreateDealModel, UpdateDealModel } from "./definitions";
+import { UpdateDealModel } from "./definitions";
 
 const API = new URL(`${process.env.API_URL}api/deal`);
 const Hotel_API = new URL(`${process.env.API_URL}api/hotel`);
@@ -63,47 +63,47 @@ export async function createDeal(
   }
 }
 
-export async function updateDeal(
-  prevState: {
-    type: string;
-    message: string;
-  },
-  formData: FormData
-): Promise<{ type: string; message: string }> {
-  const { slug, name, video } = UpdateDeal.parse({
-    slug: formData.get("slug"),
-    name: formData.get("name"),
-    video: formData.get("video"),
-  });
+// export async function updateDeal(
+//   prevState: {
+//     type: string;
+//     message: string;
+//   },
+//   formData: FormData
+// ): Promise<{ type: string; message: string }> {
+//   const { slug, name, video } = UpdateDeal.parse({
+//     slug: formData.get("slug"),
+//     name: formData.get("name"),
+//     video: formData.get("video"),
+//   });
 
-  const id = formData.get("id");
+//   const id = formData.get("id");
 
-  const data = {
-    name: name,
-    slug: slug,
-    video: video,
-  };
-  // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+//   const data = {
+//     name: name,
+//     slug: slug,
+//     video: video,
+//   };
+//   // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
-  const res = await fetch(`${API}/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!res.ok) {
-    const msg = (await res.text()).split("\n").join(",");
-    return {
-      type: "error",
-      message: `${msg}`,
-    };
-  } else {
-    revalidatePath("/dashboard/deals");
-    return {
-      type: "success",
-      message: "Deal updated successfully",
-    };
-  }
-}
+//   const res = await fetch(`${API}/${id}`, {
+//     method: "PUT",
+//     body: JSON.stringify(data),
+//     headers: { "Content-Type": "application/json" },
+//   });
+//   if (!res.ok) {
+//     const msg = (await res.text()).split("\n").join(",");
+//     return {
+//       type: "error",
+//       message: `${msg}`,
+//     };
+//   } else {
+//     revalidatePath("/dashboard/deals");
+//     return {
+//       type: "success",
+//       message: "Deal updated successfully",
+//     };
+//   }
+// }
 
 export async function updateHotelDeal(
   prevState: {
