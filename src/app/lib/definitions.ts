@@ -30,12 +30,15 @@ export type Hotel = {
     name: string;
     rate: number;
     amenities: string;
+    mediaFile: File[];
 }
 export type UpdateHotelModel = {
     id:string;
     name: string;
     rate: number;
     amenities: string;
+    media: string[];
+    mediaFiles: File[];
 }
 export type UpdateDealModel = {
     id:string;
