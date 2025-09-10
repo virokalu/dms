@@ -1,11 +1,12 @@
 'use client'
 import { deleteDeal, deleteHotel } from "@/app/lib/action";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { pink } from "@mui/material/colors";
 import { startTransition, useActionState, useEffect } from "react";
 import Notify from "../notify";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 export function DeleteDeal({ id }: { id: string }) {
     const [state, deleteDealAction] = useActionState(deleteDeal, {
@@ -19,14 +20,47 @@ export function DeleteDeal({ id }: { id: string }) {
         if (state.type == "success") {
             router.refresh();
         }
-    }, [state, router])
+    }, [state, router]);
+
+    const [open, setOpen] = React.useState(false);
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return (
-        <form action={deleteDealAction}>
-            <Button type="submit" className="p-2 hover:bg-gray-100">
+        <React.Fragment>
+            <Button sx={{ ml: 2 }} color="error" onClick={handleClickOpen} className="p-2 hover:bg-gray-100">
                 <span className="sr-only">Delete</span>
                 <DeleteIcon sx={{ color: pink[500] }} />
             </Button>
-        </form>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Delete the Deal
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Do you want to delete the deal?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" onClick={handleClose}>No</Button>
+                    <Button color="error" variant="outlined" onClick={() => startTransition(()=>{
+                        deleteDealAction();
+                        setOpen(false);
+                        })} autoFocus>
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </React.Fragment>
     )
 }
 
@@ -43,10 +77,49 @@ export function DeleteHotel({ id, onDeleted }: { id: string; onDeleted: () => vo
             onDeleted();
         }
     }, [state, router])
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    //() => startTransition(() => deleteHotelAction())
+
     return (
-                <Button sx={{ ml: 2 }} variant="outlined" color="error" onClick={() => startTransition(() => deleteHotelAction())} className="p-2 hover:bg-gray-100">
-                    <span className="sr-only">Delete</span>
-                    <DeleteIcon sx={{ color: pink[500] }} />
-                </Button>
+        <React.Fragment>
+            <Button sx={{ ml: 2 }} variant="outlined" color="error" onClick={handleClickOpen} className="p-2 hover:bg-gray-100">
+                <span className="sr-only">Delete</span>
+                <DeleteIcon sx={{ color: pink[500] }} />
+            </Button>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Delete the Hotel
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Do you want to delete the hotel?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" onClick={handleClose}>No</Button>
+                    <Button color="error" variant="outlined" onClick={() => startTransition(()=>{
+                        deleteHotelAction();
+                        setOpen(false);
+                        })} autoFocus>
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </React.Fragment>
     )
 }

@@ -8,11 +8,24 @@ export type Deal = {
 export type CreateDealModel = {
     slug: string;
     name: string;
-    video: string;
+    video: Video;
     imageFile: File | null;
+    videoFile: File | null;
     image:string;
     hotels: Hotel[];
 }
+
+export type Video = {
+    alt: string,
+    path: string;
+}
+
+export type UpdateVideoModel = {
+    id: string;
+    alt: string;
+    path: string;
+}
+
 export type Hotel = {
     name: string;
     rate: number;
@@ -28,7 +41,7 @@ export type UpdateDealModel = {
     id:string;
     slug: string;
     name: string;
-    video: string;
+    video: UpdateVideoModel;
     image: string;
     hotels: UpdateHotelModel[];
 }

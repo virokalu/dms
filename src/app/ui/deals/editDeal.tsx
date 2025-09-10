@@ -1,10 +1,10 @@
 'use client'
 import { UpdateDealModel, ImageFile } from "@/app/lib/definitions";
-import { Box, Button, Grid, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import Link from "next/link";
 import { startTransition, useActionState, useEffect, useState } from "react";
 import Notify from "../notify";
-import { updateHotelDeal, updateImage } from "@/app/lib/action";
+import { updateHotelDeal, updateImage, updateVideo } from "@/app/lib/action";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { DeleteHotel } from "./buttons";
@@ -28,7 +28,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     // const [imageLink, setImageLink] = useState<string | null>(null);
 
     //Handle Notification
-    const {back, refresh} = useRouter();
+    const { back, refresh } = useRouter();
     useEffect(() => {
 
         console.log(watch('image'))
@@ -48,7 +48,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     }, [state])
 
     //ReactHookForm Yup Validation
-    const { control,register, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
+    const { control, register, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
         {
             defaultValues: sentDeal
         }
@@ -62,8 +62,8 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     const [activeStep, setActiveStep] = React.useState(0);
 
     const handleNext = async () => {
-        const isValid = await trigger(['slug', 'name', 'video']); //Validate Fields in Deal
-        if(isValid){
+        const isValid = await trigger(['slug', 'name', 'video.alt']); //Validate Fields in Deal
+        if (isValid) {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
         }
     };
@@ -74,7 +74,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
     //Handle Submission
     const onSubmit: SubmitHandler<UpdateDealModel> = (data) => {
-        startTransition(() =>{
+        startTransition(() => {
             updateDealAction(data);
         })
     };
@@ -86,15 +86,29 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     };
 
     //HandleImageEdit
-    const handleImageEdit = async (file: File)=>{
-        const imageFile : ImageFile = {
+    const handleImageEdit = async (file: File) => {
+        const imageFile: ImageFile = {
             id: watch('id'),
             imageFile: file,
         }
         const res = await updateImage(imageFile);
-        if(res.type == "success"){
+        if (res.type == "success") {
             window.location.reload();
-        }else{
+        } else {
+            Notify(res.type, res.message);
+        }
+    };
+
+    //HandleImageEdit
+    const handleVideoEdit = async (file: File) => {
+        const imageFile: ImageFile = {
+            id: watch('id'),
+            imageFile: file,
+        }
+        const res = await updateVideo(imageFile);
+        if (res.type == "success") {
+            window.location.reload();
+        } else {
             Notify(res.type, res.message);
         }
     };
@@ -122,7 +136,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
                         {/* Deal Text Feild Here */}
 
-                        <Typography sx={{ pt: 4 }} variant="h6">New Deal Details</Typography>
+                        <Typography sx={{ pt: 4 }} variant="h6">Update Deal Details</Typography>
                         <Box
                             sx={{
                                 minWidth: 500,
@@ -134,8 +148,8 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                         >
                             <label htmlFor="slug">Slug</label>
                             <input
-                            readOnly
-                            id="slug"
+                                readOnly
+                                id="slug"
                                 className='text_input'
                                 placeholder='Slug...'
                                 {...register("slug", {
@@ -159,8 +173,8 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 <p className='error_msg'>Name is required !</p>
                             )}
                             {errors?.name?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
-                            
-                            <label htmlFor="name">Video</label>
+
+                            {/* <label htmlFor="name">Video</label>
                             <input
                                 className='text_input'
                                 placeholder='Video URL...'
@@ -171,20 +185,70 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                             />
                             {errors?.video?.type === "pattern" && (
                                 <p className='error_msg'>URL links only !</p>
-                            )}
+                            )} */}
 
-                            {watch('image')?<img width={300} src={`${API}/${watch('image')}`}/>:<p>No Image to View</p>}                        
+                            {watch('image') ? <img width={300} src={`${API}/${watch('image')}`} /> : <p>No Image to View</p>}
 
                             <span><b>Update the Image</b></span>
                             <input
                                 type='file'
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] ?? null
-                                    if(file){
+                                    if (file) {
                                         handleImageEdit(file)
                                     }
                                 }}
                             />
+
+                            <Typography sx={{ pt: 4 }} variant="h6">Update Video</Typography>
+                            <Box sx={{
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                borderColor: '#bdbdbd',
+                                padding: 5,
+                                marginBottom: 4,
+                                gap: '16px'
+                            }}>
+                                <Stack spacing={2}>
+                                    <label htmlFor='videoAlt'>Video Alt</label>
+                                    <input
+                                        id="videoAlt"
+                                        className='text_input'
+                                        placeholder='Alt...'
+                                        {...register("video.alt", {
+                                            required: true,
+                                            pattern: /^[A-Za-z\s]+$/i
+                                        })}
+                                    />
+
+                                    {errors?.video?.alt?.type === "required" && (
+                                        <p className='error_msg'>Alt is required !</p>
+                                    )}
+                                    {errors?.video?.alt?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
+
+                                    {watch('video.path') ? <video autoPlay loop width={300} src={`${API}/${watch('video.path')}`} /> : <p>No Video to View</p>}
+
+                                    <span><b>Update the Video</b></span>
+
+                                    <input type='file'
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0] ?? null
+                                            if (file) {
+                                                handleVideoEdit(file)
+                                            }
+                                        }}
+                                    />
+                                    <input
+                                        hidden
+                                        {...register("video.path", {
+                                            required: true,
+                                        })}
+                                    />
+                                    {errors?.video?.path?.type === "required" && (
+                                        <p className='error_msg'>Video is required !</p>
+                                    )}
+                                </Stack>
+                            </Box>
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 <Link href={'/dashboard/deals'}>
@@ -214,7 +278,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                     }}>
                                         <Grid container spacing={2} key={index}>
                                             <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
-                                            
+
                                             <input
                                                 className='text_input'
                                                 placeholder='Hotel Name...'
@@ -264,8 +328,8 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                             )}
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={()=>append({id: '0',name: '', rate: 0, amenities: ''})}>Add Hotel</Button> : null}
-                                                {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={()=>remove(index)}>Remove Hotel {index + 1}</Button> : null}
+                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ id: '0', name: '', rate: 0, amenities: '' })}>Add Hotel</Button> : null}
+                                                {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                                 {watch(`hotels.${index}.id`) != '0' ? <DeleteHotel id={watch(`hotels.${index}.id`)} onDeleted={() => handleHotelDeleted(index)} /> : null}
                                             </Box>
                                         </Grid>

@@ -28,7 +28,7 @@ export default async function Page() {
               <TableRow>
                 <TableCell><b>Slug</b></TableCell>
                 <TableCell><b>Name</b></TableCell>
-                <TableCell><b>Video</b></TableCell>
+                {/* <TableCell><b>Video</b></TableCell> */}
                 <TableCell></TableCell>
                 <TableCell></TableCell>
               </TableRow>
@@ -42,7 +42,7 @@ export default async function Page() {
                   >
                     <TableCell>{deal.slug}</TableCell>
                     <TableCell>{deal.name}</TableCell>
-                    <TableCell>{deal.video}</TableCell>
+                    {/* <TableCell>{deal.video}</TableCell> */}
                     <TableCell>
                       <Link href={`/dashboard/deals/${deal.slug}/edit`} className="p-2 hover:bg-gray-100">
                         <EditIcon color='primary' />
