@@ -233,7 +233,7 @@ export default function Page() {
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 <Link href={'/dashboard/deals'}>
-                                    <Button variant="outlined" className='px-4'>Cancel</Button>
+                                    <Button variant="outlined" className='px-4'>Back</Button>
                                 </Link>
                                 <Box sx={{ flex: '1 1 auto' }} />
 
