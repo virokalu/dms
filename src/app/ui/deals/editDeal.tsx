@@ -48,7 +48,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     }, [state])
 
     //ReactHookForm Yup Validation
-    const { control, register, trigger, handleSubmit, formState: { errors }, watch } = useForm<UpdateDealModel>(
+    const { control, register, trigger, handleSubmit, formState: { errors, isDirty }, watch } = useForm<UpdateDealModel>(
         {
             defaultValues: sentDeal
         }
@@ -337,8 +337,6 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 ))}
                             </Box>
 
-
-
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 4 }}>
                                 <Button
                                     variant="outlined"
@@ -349,7 +347,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 </Button>
                                 <Box sx={{ flex: '1 1 auto' }} />
 
-                                <Button type="submit" variant="contained" color="primary">
+                                <Button type="submit" variant="contained" color="primary" disabled={!isDirty}>
                                     Update
                                 </Button>
                             </Box>
