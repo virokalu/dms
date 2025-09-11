@@ -165,6 +165,7 @@ export default function Page() {
                             )} */}
                             {watch('image') ? <img width={300} src={watch('image')} /> : <p>No Image to View</p>}
                             <input type='file'
+                                accept='image/*'
                                 onChange={(e) => {
                                     const file = e.target.files?.[0]
                                     setImageFile(file ?? null);
@@ -211,6 +212,7 @@ export default function Page() {
                                     {watch('video.path') ? <video autoPlay width={300} src={watch('video.path')} /> : <p>No Video to View</p>}
 
                                     <input type='file'
+                                        accept='video/*'
                                         onChange={(e) => {
                                             const file = e.target.files?.[0]
                                             setVideoFile(file ?? null);
@@ -312,15 +314,13 @@ export default function Page() {
 
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ name: '', rate: 0, amenities: '' })}>Add Hotel</Button> : null}
+                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ name: '', rate: 0, amenities: '', mediaFiles: [], media: [] })}>Add Hotel</Button> : null}
                                                 {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                             </Box>
                                         </Grid>
                                     </Box>
                                 ))}
                             </Box>
-
-
 
                             <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                                 <Button

@@ -30,7 +30,8 @@ export type Hotel = {
     name: string;
     rate: number;
     amenities: string;
-    mediaFile: File[];
+    media: string[];
+    mediaFiles: File[];
 }
 export type UpdateHotelModel = {
     id:string;

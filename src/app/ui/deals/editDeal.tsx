@@ -328,7 +328,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                             )}
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ id: '0', name: '', rate: 0, amenities: '' })}>Add Hotel</Button> : null}
+                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ id: '0', name: '', rate: 0, amenities: '',media: [],mediaFiles: [] })}>Add Hotel</Button> : null}
                                                 {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                                 {watch(`hotels.${index}.id`) != '0' ? <DeleteHotel id={watch(`hotels.${index}.id`)} onDeleted={() => handleHotelDeleted(index)} /> : null}
                                             </Box>
