@@ -20,19 +20,20 @@ export type Video = {
     path: string;
 }
 
-export type UpdateVideoModel = {
-    id: string;
-    alt: string;
-    path: string;
-}
-
 export type Hotel = {
     name: string;
     rate: number;
     amenities: string;
-    media: string[];
-    mediaFiles: File[];
+    medias: CreateMediaModel[];
+    fieldId: string;
 }
+
+export type CreateMediaModel ={
+    fieldId: string;
+    mediaFile: File;
+    alt: string;
+}
+
 export type UpdateHotelModel = {
     id:string;
     name: string;
@@ -45,7 +46,7 @@ export type UpdateDealModel = {
     id:string;
     slug: string;
     name: string;
-    video: UpdateVideoModel;
+    video: Video;
     image: string;
     hotels: UpdateHotelModel[];
 }

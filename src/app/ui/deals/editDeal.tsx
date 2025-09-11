@@ -191,6 +191,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
                             <span><b>Update the Image</b></span>
                             <input
+                                accept='image/*'
                                 type='file'
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] ?? null
@@ -231,6 +232,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                     <span><b>Update the Video</b></span>
 
                                     <input type='file'
+                                        accept='video/*'
                                         onChange={(e) => {
                                             const file = e.target.files?.[0] ?? null
                                             if (file) {
