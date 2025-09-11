@@ -11,6 +11,7 @@ import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 const steps = ['Add Deal Details', 'Add Hotels'];
 
 import { CreateDealModel } from '@/app/lib/definitions';
+import MediasArray from '@/app/ui/deals/mediasArray';
 
 export default function Page() {
     const [state, createDealAction] = useActionState(createDeal, {
@@ -259,9 +260,12 @@ export default function Page() {
                                         borderRadius: 5,
                                         borderColor: '#bdbdbd',
                                         padding: 5,
-                                        marginBottom: 4
+                                        marginBottom: 4,
                                     }}>
-                                        <Grid container spacing={2} key={index}>
+                                        <Grid container sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column'
+                                        }} spacing={2} key={index}>
                                             <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
 
                                             <input
@@ -311,10 +315,20 @@ export default function Page() {
                                             {errors?.hotels?.[index]?.amenities?.type === "pattern" && (
                                                 <p className='error_msg'>Comma-separated list of amenities only !</p>
                                             )}
+                                            
+                                            <Typography variant="h6">New Medias</Typography>
+                                            <MediasArray nestIndex={index} {...{control, register, errors, watch}}/>
 
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ name: '', rate: 0, amenities: '', mediaFiles: [], media: [] })}>Add Hotel</Button> : null}
+                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({
+                                                    name: '', rate: 0, amenities: '', medias: [{
+                                                        fieldId: '',
+                                                        mediaFile: null,
+                                                        alt: '',
+                                                        path: ''
+                                                    }], fieldId: ''
+                                                })}>Add Hotel</Button> : null}
                                                 {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                             </Box>
                                         </Grid>

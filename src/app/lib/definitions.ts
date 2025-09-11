@@ -24,14 +24,15 @@ export type Hotel = {
     name: string;
     rate: number;
     amenities: string;
-    medias: CreateMediaModel[];
+    medias: Media[];
     fieldId: string;
 }
 
-export type CreateMediaModel ={
+export type Media ={
     fieldId: string;
-    mediaFile: File;
+    mediaFile: File | null;
     alt: string;
+    path: string;
 }
 
 export type UpdateHotelModel = {
