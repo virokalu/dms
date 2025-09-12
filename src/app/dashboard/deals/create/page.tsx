@@ -10,7 +10,7 @@ import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
 const steps = ['Add Deal Details', 'Add Hotels'];
 
-import { CreateDealModel } from '@/app/lib/definitions';
+import { CreateDealModel, Media } from '@/app/lib/definitions';
 import MediasArray from '@/app/ui/deals/mediasArray';
 
 export default function Page() {
@@ -36,6 +36,8 @@ export default function Page() {
     //Handle Image
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [videoFile, setVideoFile] = useState<File | null>(null);
+    const [mediaList, setmediaList] = useState<Media[]>([]);
+
 
     const handleNext = async () => {
         const isValid = await trigger(['slug', 'name', 'video.path', 'image', 'video.alt'], { shouldFocus: true }); // fields for step 1
@@ -52,25 +54,27 @@ export default function Page() {
 
     //Handle Submission
     const onSubmit: SubmitHandler<CreateDealModel> = async (data) => {
-        const formData = new FormData();
+        // const formData = new FormData();
 
-        formData.append("slug", data.slug);
-        formData.append("name", data.name);
-        formData.append('video.alt', data.video.alt);
-        if (imageFile) {
-            formData.append("imageFile", imageFile);
-        }
-        if (videoFile) {
-            formData.append("videoFile", videoFile)
-        }
-        data.hotels.forEach((hotel, index) => {
-            formData.append(`hotels[${index}].name`, hotel.name);
-            formData.append(`hotels[${index}].rate`, hotel.rate.toString());
-            formData.append(`hotels[${index}].amenities`, hotel.amenities);
-        });
-        startTransition(() => {
-            createDealAction(formData);
-        })
+        // formData.append("slug", data.slug);
+        // formData.append("name", data.name);
+        // formData.append('video.alt', data.video.alt);
+        // if (imageFile) {
+        //     formData.append("imageFile", imageFile);
+        // }
+        // if (videoFile) {
+        //     formData.append("videoFile", videoFile)
+        // }
+        // data.hotels.forEach((hotel, index) => {
+        //     formData.append(`hotels[${index}].name`, hotel.name);
+        //     formData.append(`hotels[${index}].rate`, hotel.rate.toString());
+        //     formData.append(`hotels[${index}].amenities`, hotel.amenities);
+        // });
+        // startTransition(() => {
+        //     createDealAction(formData);
+        // })
+        console.log(data);
+        console.log(mediaList);
     };
     // const onError: SubmitErrorHandler<CreateDealModel> = (errors) => console.log(errors)
 
@@ -92,7 +96,7 @@ export default function Page() {
                             mediaFile: null,
                             alt: '',
                             path: ''
-                        }], fieldId: ''
+                        }],
                     }
                 ]
             }
@@ -325,7 +329,7 @@ export default function Page() {
                                             )}
 
                                             <Typography variant="h6">New Media</Typography>
-                                            <MediasArray nestIndex={index} {...{ control, register, errors, watch, setValue }} />
+                                            <MediasArray hotelId={field.id} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
 
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
@@ -334,8 +338,9 @@ export default function Page() {
                                                         fieldId: '',
                                                         mediaFile: null,
                                                         alt: '',
-                                                        path: ''
-                                                    }], fieldId: ''
+                                                        path: '',
+                                                        isVideo: false,
+                                                    }]
                                                 })}>Add Hotel</Button> : null}
                                                 {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                             </Box>
