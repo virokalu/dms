@@ -41,7 +41,8 @@ export default function Page() {
         const isValid = await trigger(['slug', 'name', 'video.path', 'image', 'video.alt'], { shouldFocus: true }); // fields for step 1
         // console.log(imageFile?.name);
 
-        if (isValid) setActiveStep((prev) => prev + 1);
+        // if (isValid) 
+        setActiveStep((prev) => prev + 1);
     };
 
     const handleBack = () => {
@@ -85,7 +86,14 @@ export default function Page() {
                 },
                 imageFile: imageFile,
                 hotels: [
-                    { name: '', rate: 0, amenities: '' }
+                    {
+                        name: '', rate: 0, amenities: '', medias: [{
+                            fieldId: '',
+                            mediaFile: null,
+                            alt: '',
+                            path: ''
+                        }], fieldId: ''
+                    }
                 ]
             }
         }
@@ -315,9 +323,9 @@ export default function Page() {
                                             {errors?.hotels?.[index]?.amenities?.type === "pattern" && (
                                                 <p className='error_msg'>Comma-separated list of amenities only !</p>
                                             )}
-                                            
-                                            <Typography variant="h6">New Medias</Typography>
-                                            <MediasArray nestIndex={index} {...{control, register, errors, watch}}/>
+
+                                            <Typography variant="h6">New Media</Typography>
+                                            <MediasArray nestIndex={index} {...{ control, register, errors, watch, setValue }} />
 
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
