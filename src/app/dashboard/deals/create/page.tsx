@@ -334,7 +334,7 @@ export default function Page() {
                                             )}
 
                                             <Typography variant="h6">New Media</Typography>
-                                            <MediasArray hotelId={field.id} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
+                                            <MediasArray nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
 
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />

@@ -2,14 +2,16 @@ import { CreateDealModel, Hotel, Media } from "@/app/lib/definitions";
 import { Box, Button, Stack } from "@mui/material";
 import { Control, useFieldArray } from "react-hook-form";
 
-export default ({ hotelId, nestIndex, control, register, errors, watch, setValue, setmediaList }: { hotelId:string, nestIndex: number, control: Control<CreateDealModel, any, CreateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any }) => {
+export default ({ nestIndex, control, register, errors, watch, setValue, setmediaList }: { nestIndex: number, control: Control<CreateDealModel, any, CreateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any }) => {
     const { fields, remove, append } = useFieldArray({
         control,
         name: `hotels.${nestIndex}.medias`
     })
+
     return (
         <Box>
             {fields.map((field, index) => {
+                
                 return (
                     <Box
                         key={field.id}

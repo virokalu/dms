@@ -35,13 +35,21 @@ export type Media ={
     isVideo: boolean;
 }
 
+export type UpdateMedia ={
+    fieldId: string;
+    mediaFile: File | undefined | null;
+    alt: string;
+    path: string;
+    isVideo: boolean;
+    isUpdated: false | true;
+}
+
 export type UpdateHotelModel = {
     id:string;
     name: string;
     rate: number;
     amenities: string;
-    media: string[];
-    mediaFiles: File[];
+    medias: UpdateMedia[];
 }
 export type UpdateDealModel = {
     id:string;

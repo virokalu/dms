@@ -1,5 +1,5 @@
 'use client'
-import { UpdateDealModel, ImageFile } from "@/app/lib/definitions";
+import { UpdateDealModel, ImageFile, Media } from "@/app/lib/definitions";
 import { Box, Button, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import Link from "next/link";
 import { startTransition, useActionState, useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { DeleteHotel } from "./buttons";
 import { useForm, useFieldArray, SubmitHandler, SubmitErrorHandler, Controller } from "react-hook-form";
+import MediasUpdateArray from "./mediasUpdateArray";
 
 const steps = ['Update Deal Details', 'Update Hotels'];
 
@@ -26,12 +27,13 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     //Handle Image
     // const [imageFile, setImageFile] = useState<File | null>(null);
     // const [imageLink, setImageLink] = useState<string | null>(null);
-
+    const [mediaList, setmediaList] = useState<Media[]>([]);
+    
     //Handle Notification
     const { back, refresh } = useRouter();
     useEffect(() => {
 
-        console.log(watch('image'))
+        // console.log(watch('image'))
         // if(sentDeal.image)
         //     setImageLink(`${API}/${sentDeal.image}`);
 
@@ -48,7 +50,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     }, [state])
 
     //ReactHookForm Yup Validation
-    const { control, register, trigger, handleSubmit, formState: { errors, isDirty }, watch } = useForm<UpdateDealModel>(
+    const { control, register, trigger, handleSubmit, setValue , formState: { errors, isDirty }, watch } = useForm<UpdateDealModel>(
         {
             defaultValues: sentDeal
         }
@@ -56,6 +58,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     const { fields, append, remove } = useFieldArray({
         control,
         name: "hotels",
+
     })
 
     //React Stepper
@@ -74,9 +77,8 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
     //Handle Submission
     const onSubmit: SubmitHandler<UpdateDealModel> = (data) => {
-        startTransition(() => {
-            updateDealAction(data);
-        })
+        // 
+        console.log(data)
     };
     const onError: SubmitErrorHandler<UpdateDealModel> = (errors) => console.log("errors")
 
@@ -278,7 +280,10 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                         padding: 5,
                                         marginBottom: 4
                                     }}>
-                                        <Grid container spacing={2} key={index}>
+                                        <Grid container sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column'
+                                        }} spacing={2} key={index}>
                                             <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
 
                                             <input
@@ -328,9 +333,20 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                             {errors?.hotels?.[index]?.amenities?.type === "pattern" && (
                                                 <p className='error_msg'>Comma-separated list of amenities only !</p>
                                             )}
+
+                                            <Typography variant="h6">Update Media</Typography>
+                                            <MediasUpdateArray API={API} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
+
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ id: '0', name: '', rate: 0, amenities: '',media: [],mediaFiles: [] })}>Add Hotel</Button> : null}
+                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ id: '0', name: '', rate: 0, amenities: '',medias: [{
+                                                        fieldId: '',
+                                                        mediaFile: null,
+                                                        alt: '',
+                                                        path: '',
+                                                        isVideo: false,
+                                                        isUpdated: true
+                                                    }] })}>Add Hotel</Button> : null}
                                                 {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                                 {watch(`hotels.${index}.id`) != '0' ? <DeleteHotel id={watch(`hotels.${index}.id`)} onDeleted={() => handleHotelDeleted(index)} /> : null}
                                             </Box>
@@ -349,7 +365,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 </Button>
                                 <Box sx={{ flex: '1 1 auto' }} />
 
-                                <Button type="submit" variant="contained" color="primary" disabled={!isDirty}>
+                                <Button type="submit" variant="contained" color="primary" disabled={!isDirty && mediaList.length == 0}>
                                     Update
                                 </Button>
                             </Box>
