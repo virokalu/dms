@@ -117,7 +117,12 @@ export default ({ hotelId, nestIndex, control, register, errors, watch, setValue
                                             isVideo: true,
                                         }
                                     )}>Add Video</Button> : null}
-                                {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove {field.isVideo ? 'Video' : 'Image'}</Button> : null}
+                                {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={
+                                    () => {
+                                        setmediaList((prev: Media[])=>prev.filter((item:Media)=>item.fieldId!==field.id))
+                                        remove(index)
+                                    }
+                                }>Remove {field.isVideo ? 'Video' : 'Image'}</Button> : null}
                             </Box>
                         </Stack>
                     </Box>

@@ -43,8 +43,8 @@ export default function Page() {
         const isValid = await trigger(['slug', 'name', 'video.path', 'image', 'video.alt'], { shouldFocus: true }); // fields for step 1
         // console.log(imageFile?.name);
 
-        // if (isValid) 
-        setActiveStep((prev) => prev + 1);
+        if (isValid) 
+            setActiveStep((prev) => prev + 1);
     };
 
     const handleBack = () => {
@@ -54,27 +54,32 @@ export default function Page() {
 
     //Handle Submission
     const onSubmit: SubmitHandler<CreateDealModel> = async (data) => {
-        // const formData = new FormData();
+        const formData = new FormData();
 
-        // formData.append("slug", data.slug);
-        // formData.append("name", data.name);
-        // formData.append('video.alt', data.video.alt);
-        // if (imageFile) {
-        //     formData.append("imageFile", imageFile);
-        // }
-        // if (videoFile) {
-        //     formData.append("videoFile", videoFile)
-        // }
-        // data.hotels.forEach((hotel, index) => {
-        //     formData.append(`hotels[${index}].name`, hotel.name);
-        //     formData.append(`hotels[${index}].rate`, hotel.rate.toString());
-        //     formData.append(`hotels[${index}].amenities`, hotel.amenities);
-        // });
-        // startTransition(() => {
-        //     createDealAction(formData);
-        // })
-        console.log(data);
-        console.log(mediaList);
+        formData.append("slug", data.slug);
+        formData.append("name", data.name);
+        formData.append('video.alt', data.video.alt);
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        }
+        if (videoFile) {
+            formData.append("videoFile", videoFile)
+        }
+        data.hotels.forEach((hotel, index) => {
+            formData.append(`hotels[${index}].name`, hotel.name);
+            formData.append(`hotels[${index}].rate`, hotel.rate.toString());
+            formData.append(`hotels[${index}].amenities`, hotel.amenities);
+            hotel.medias.forEach((media, mediaIndex)=>{
+                const mediaFile : File = mediaList.find(item=>item.fieldId==media.fieldId)?.mediaFile!;
+                formData.append(`hotels[${index}].medias[${mediaIndex}].alt`, media.alt);
+                formData.append(`hotels[${index}].medias[${mediaIndex}].mediaFile`, mediaFile)
+            })
+        });
+        startTransition(() => {
+            createDealAction(formData);
+        })
+        // console.log(data);
+        // console.log(mediaList);
     };
     // const onError: SubmitErrorHandler<CreateDealModel> = (errors) => console.log(errors)
 
