@@ -109,9 +109,10 @@ export async function updateHotelDeal(
   prevState: {
     type: string;
     message: string;
+    id: string;
   },
-  data: UpdateDealModel
-): Promise<{ type: string; message: string }> {
+  data: FormData,
+): Promise<{ type: string; message: string; id :string; }> {
   // const { slug, name, video } = UpdateDeal.parse({
   //   slug: formData.get("slug"),
   //   name: formData.get("name"),
@@ -127,22 +128,23 @@ export async function updateHotelDeal(
   // };
   // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
-  const res = await fetch(`${API}/${data.id}`, {
+  const res = await fetch(`${API}/${prevState.id}`, {
     method: "PUT",
-    body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" },
+    body: data,
   });
   if (!res.ok) {
     const msg = (await res.text()).split("\n").join(",");
     return {
       type: "error",
       message: `${msg}`,
+      id:''
     };
   } else {
     revalidatePath("/dashboard/deals");
     return {
       type: "success",
       message: "Deal updated successfully",
+      id:''
     };
   }
 }

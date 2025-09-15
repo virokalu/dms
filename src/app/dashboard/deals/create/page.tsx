@@ -10,7 +10,8 @@ import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
 const steps = ['Add Deal Details', 'Add Hotels'];
 
-import { CreateDealModel } from '@/app/lib/definitions';
+import { CreateDealModel, Media } from '@/app/lib/definitions';
+import MediasArray from '@/app/ui/deals/mediasArray';
 
 export default function Page() {
     const [state, createDealAction] = useActionState(createDeal, {
@@ -35,12 +36,15 @@ export default function Page() {
     //Handle Image
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [videoFile, setVideoFile] = useState<File | null>(null);
+    const [mediaList, setmediaList] = useState<Media[]>([]);
+
 
     const handleNext = async () => {
         const isValid = await trigger(['slug', 'name', 'video.path', 'image', 'video.alt'], { shouldFocus: true }); // fields for step 1
         // console.log(imageFile?.name);
 
-        if (isValid) setActiveStep((prev) => prev + 1);
+        if (isValid) 
+            setActiveStep((prev) => prev + 1);
     };
 
     const handleBack = () => {
@@ -65,10 +69,17 @@ export default function Page() {
             formData.append(`hotels[${index}].name`, hotel.name);
             formData.append(`hotels[${index}].rate`, hotel.rate.toString());
             formData.append(`hotels[${index}].amenities`, hotel.amenities);
+            hotel.medias.forEach((media, mediaIndex)=>{
+                const mediaFile : File = mediaList.find(item=>item.fieldId==media.fieldId)?.mediaFile!;
+                formData.append(`hotels[${index}].medias[${mediaIndex}].alt`, media.alt);
+                formData.append(`hotels[${index}].medias[${mediaIndex}].mediaFile`, mediaFile)
+            })
         });
         startTransition(() => {
             createDealAction(formData);
         })
+        // console.log(data);
+        // console.log(mediaList);
     };
     // const onError: SubmitErrorHandler<CreateDealModel> = (errors) => console.log(errors)
 
@@ -84,7 +95,14 @@ export default function Page() {
                 },
                 imageFile: imageFile,
                 hotels: [
-                    { name: '', rate: 0, amenities: '' }
+                    {
+                        name: '', rate: 0, amenities: '', medias: [{
+                            fieldId: '',
+                            mediaFile: null,
+                            alt: '',
+                            path: ''
+                        }],
+                    }
                 ]
             }
         }
@@ -165,6 +183,7 @@ export default function Page() {
                             )} */}
                             {watch('image') ? <img width={300} src={watch('image')} /> : <p>No Image to View</p>}
                             <input type='file'
+                                accept='image/*'
                                 onChange={(e) => {
                                     const file = e.target.files?.[0]
                                     setImageFile(file ?? null);
@@ -211,6 +230,7 @@ export default function Page() {
                                     {watch('video.path') ? <video autoPlay width={300} src={watch('video.path')} /> : <p>No Video to View</p>}
 
                                     <input type='file'
+                                        accept='video/*'
                                         onChange={(e) => {
                                             const file = e.target.files?.[0]
                                             setVideoFile(file ?? null);
@@ -257,9 +277,12 @@ export default function Page() {
                                         borderRadius: 5,
                                         borderColor: '#bdbdbd',
                                         padding: 5,
-                                        marginBottom: 4
+                                        marginBottom: 4,
                                     }}>
-                                        <Grid container spacing={2} key={index}>
+                                        <Grid container sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column'
+                                        }} spacing={2} key={index}>
                                             <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
 
                                             <input
@@ -310,17 +333,26 @@ export default function Page() {
                                                 <p className='error_msg'>Comma-separated list of amenities only !</p>
                                             )}
 
+                                            <Typography variant="h6">New Media</Typography>
+                                            <MediasArray nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
+
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ name: '', rate: 0, amenities: '' })}>Add Hotel</Button> : null}
+                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({
+                                                    name: '', rate: 0, amenities: '', medias: [{
+                                                        fieldId: '',
+                                                        mediaFile: null,
+                                                        alt: '',
+                                                        path: '',
+                                                        isVideo: false,
+                                                    }]
+                                                })}>Add Hotel</Button> : null}
                                                 {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                             </Box>
                                         </Grid>
                                     </Box>
                                 ))}
                             </Box>
-
-
 
                             <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                                 <Button

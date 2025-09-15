@@ -1,5 +1,5 @@
 'use client'
-import { UpdateDealModel, ImageFile } from "@/app/lib/definitions";
+import { UpdateDealModel, ImageFile, Media } from "@/app/lib/definitions";
 import { Box, Button, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import Link from "next/link";
 import { startTransition, useActionState, useEffect, useState } from "react";
@@ -9,11 +9,13 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { DeleteHotel } from "./buttons";
 import { useForm, useFieldArray, SubmitHandler, SubmitErrorHandler, Controller } from "react-hook-form";
+import MediasUpdateArray from "./mediasUpdateArray";
 
 const steps = ['Update Deal Details', 'Update Hotels'];
 
 export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel, API: string }) {
     const [state, updateDealAction] = useActionState(updateHotelDeal, {
+        id: sentDeal.id,
         type: "",
         message: "",
     });
@@ -26,16 +28,18 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     //Handle Image
     // const [imageFile, setImageFile] = useState<File | null>(null);
     // const [imageLink, setImageLink] = useState<string | null>(null);
-
+    const [mediaList, setmediaList] = useState<Media[]>([]);
+    
     //Handle Notification
-    const { back, refresh } = useRouter();
+    const { back } = useRouter();
     useEffect(() => {
 
-        console.log(watch('image'))
+        // console.log(watch('image'))
         // if(sentDeal.image)
         //     setImageLink(`${API}/${sentDeal.image}`);
 
         Notify(state.type, state.message);
+        console.log(state.message)
         // Notify(imgstate.type, imgstate.message);
         if (state.type == "success") {
             back();
@@ -48,7 +52,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     }, [state])
 
     //ReactHookForm Yup Validation
-    const { control, register, trigger, handleSubmit, formState: { errors, isDirty }, watch } = useForm<UpdateDealModel>(
+    const { control, register, trigger, handleSubmit, setValue, formState: { errors, isDirty }, watch } = useForm<UpdateDealModel>(
         {
             defaultValues: sentDeal
         }
@@ -56,6 +60,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     const { fields, append, remove } = useFieldArray({
         control,
         name: "hotels",
+
     })
 
     //React Stepper
@@ -74,11 +79,59 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
     //Handle Submission
     const onSubmit: SubmitHandler<UpdateDealModel> = (data) => {
+        console.log(data)
+        const formData = new FormData();
+
+        formData.append("slug", data.slug);
+        formData.append("name", data.name);
+        formData.append('video.alt', data.video.alt);
+
+        data.hotels.forEach((hotel, index) => {
+            formData.append(`hotels[${index}].id`, hotel.id);
+            formData.append(`hotels[${index}].name`, hotel.name);
+            formData.append(`hotels[${index}].rate`, hotel.rate.toString());
+            formData.append(`hotels[${index}].amenities`, hotel.amenities);
+            hotel.medias.forEach((media, mediaIndex) => {
+                if (media.isUpdated) {
+                    const mediaFile = mediaList.find(item => item.fieldId == media.fieldId)?.mediaFile;
+                    // if (mediaFile != null) {
+                    //     const mediaData: Media = {
+                    //         mediaFile: mediaFile,
+                    //         alt: media.alt,
+                    //         fieldId: "",
+                    //         path: "",
+                    //         isVideo: false
+                    //     }
+                    //     formData.append(`hotels[${index}].medias[${mediaIndex}]`, mediaData)
+                    // }else{
+                    //     console.log(`File not fonud with alt ${media.alt}`);
+                    //     return
+                    // }
+
+                    if (mediaFile) {
+                        console.log(mediaFile);
+                        formData.append(`hotels[${index}].medias[${mediaIndex}].mediaFile`, mediaFile);
+                    } else {
+                        console.warn(`Missing mediaFile for fieldId ${media.fieldId}`);
+                    }
+
+                } else {
+                    
+                    formData.append(`hotels[${index}].medias[${mediaIndex}].path`, media.path)
+                }
+                formData.append(`hotels[${index}].medias[${mediaIndex}].alt`, media.alt);
+            })
+        });
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
         startTransition(() => {
-            updateDealAction(data);
+            updateDealAction(formData);
         })
+        // console.log(formData)
     };
-    const onError: SubmitErrorHandler<UpdateDealModel> = (errors) => console.log("errors")
+    const onError: SubmitErrorHandler<UpdateDealModel> = (errors) => console.log(errors)
 
     //Handle Delete
     const handleHotelDeleted = (deletedHotelId: number) => {
@@ -191,6 +244,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
                             <span><b>Update the Image</b></span>
                             <input
+                                accept='image/*'
                                 type='file'
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] ?? null
@@ -231,6 +285,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                     <span><b>Update the Video</b></span>
 
                                     <input type='file'
+                                        accept='video/*'
                                         onChange={(e) => {
                                             const file = e.target.files?.[0] ?? null
                                             if (file) {
@@ -276,7 +331,10 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                         padding: 5,
                                         marginBottom: 4
                                     }}>
-                                        <Grid container spacing={2} key={index}>
+                                        <Grid container sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column'
+                                        }} spacing={2} key={index}>
                                             <Typography sx={{ pt: 2 }}>Hotel {index + 1}</Typography>
 
                                             <input
@@ -326,9 +384,22 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                             {errors?.hotels?.[index]?.amenities?.type === "pattern" && (
                                                 <p className='error_msg'>Comma-separated list of amenities only !</p>
                                             )}
+
+                                            <Typography variant="h6">Update Media</Typography>
+                                            <MediasUpdateArray API={API} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
+
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ id: '0', name: '', rate: 0, amenities: '' })}>Add Hotel</Button> : null}
+                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({
+                                                    id: '0', name: '', rate: 0, amenities: '', medias: [{
+                                                        fieldId: '',
+                                                        mediaFile: null,
+                                                        alt: '',
+                                                        path: '',
+                                                        isVideo: false,
+                                                        isUpdated: true
+                                                    }]
+                                                })}>Add Hotel</Button> : null}
                                                 {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                                 {watch(`hotels.${index}.id`) != '0' ? <DeleteHotel id={watch(`hotels.${index}.id`)} onDeleted={() => handleHotelDeleted(index)} /> : null}
                                             </Box>
@@ -347,7 +418,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 </Button>
                                 <Box sx={{ flex: '1 1 auto' }} />
 
-                                <Button type="submit" variant="contained" color="primary" disabled={!isDirty}>
+                                <Button type="submit" variant="contained" color="primary" disabled={!isDirty && mediaList.length == 0}>
                                     Update
                                 </Button>
                             </Box>
