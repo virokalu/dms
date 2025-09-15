@@ -104,7 +104,7 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                                 isVideo: false
                                             }
 
-                                            // field.isUpdated = true
+                                            field.isUpdated = true
                                             setValue(`hotels.[${nestIndex}].medias.[${index}].isUpdated`, true)
                                             setmediaList((prev: Media[]) => [...prev, media])
                                             setValue(`hotels.[${nestIndex}].medias.[${index}].path`, URL.createObjectURL(file))
