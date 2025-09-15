@@ -43,7 +43,7 @@ export default function Page() {
         const isValid = await trigger(['slug', 'name', 'video.path', 'image', 'video.alt'], { shouldFocus: true }); // fields for step 1
         // console.log(imageFile?.name);
 
-        if (isValid) 
+        if (isValid)
             setActiveStep((prev) => prev + 1);
     };
 
@@ -69,8 +69,8 @@ export default function Page() {
             formData.append(`hotels[${index}].name`, hotel.name);
             formData.append(`hotels[${index}].rate`, hotel.rate.toString());
             formData.append(`hotels[${index}].amenities`, hotel.amenities);
-            hotel.medias.forEach((media, mediaIndex)=>{
-                const mediaFile : File = mediaList.find(item=>item.fieldId==media.fieldId)?.mediaFile!;
+            hotel.medias.forEach((media, mediaIndex) => {
+                const mediaFile: File = mediaList.find(item => item.fieldId == media.fieldId)?.mediaFile!;
                 formData.append(`hotels[${index}].medias[${mediaIndex}].alt`, media.alt);
                 formData.append(`hotels[${index}].medias[${mediaIndex}].mediaFile`, mediaFile)
             })
@@ -181,38 +181,51 @@ export default function Page() {
                             {errors?.video?.type === "pattern" && (
                                 <p className='error_msg'>URL links only !</p>
                             )} */}
-                            {watch('image') ? <img width={300} src={watch('image')} /> : <p>No Image to View</p>}
-                            <input type='file'
-                                accept='image/*'
-                                onChange={(e) => {
-                                    const file = e.target.files?.[0]
-                                    setImageFile(file ?? null);
-                                    if (file) {
-                                        setValue('image', URL.createObjectURL(file))
-                                    }
-                                }}
-                            />
-                            <input
-                                hidden
-                                {...register("image", {
-                                    required: true,
-                                })}
-                            />
-                            {errors?.image?.type === "required" && (
-                                <p className='error_msg'>Image is required !</p>
-                            )}
-
-                            <Typography sx={{ pt: 4 }} variant="h6">New Video</Typography>
-
                             <Box sx={{
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                borderColor: '#bdbdbd',
-                                padding: 5,
-                                marginBottom: 4,
-                                gap: '16px'
+                                display: 'flex',
+                                flexDirection: {
+                                    xs: 'column',
+                                    sm: 'row'
+                                },
+                                // alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: 8
                             }}>
-                                <Stack spacing={4}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2
+
+                                }}>
+                                    {watch('video.path') ? <video autoPlay width={300} src={watch('video.path')} /> : <p>No Video to View</p>}
+
+                                    <label htmlFor="video-upload">
+                                        <Button variant="outlined" component="span">
+                                            Upload Video
+                                        </Button>
+                                    </label>
+                                    <input
+                                        id="video-upload"
+                                        type="file"
+                                        accept="video/*"
+                                        style={{ display: 'none' }}
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            setVideoFile(file ?? null);
+                                            if (file) {
+                                                setValue('video.path', URL.createObjectURL(file));
+                                            }
+                                        }}
+                                    />
+                                    <input
+                                        hidden
+                                        {...register("video.path", {
+                                            required: true,
+                                        })}
+                                    />
+                                    {errors?.video?.path?.type === "required" && (
+                                        <p className='error_msg'>Video is required !</p>
+                                    )}
                                     <input
                                         className='text_input'
                                         placeholder='Alt...'
@@ -227,29 +240,59 @@ export default function Page() {
                                     )}
                                     {errors?.video?.alt?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
 
-                                    {watch('video.path') ? <video autoPlay width={300} src={watch('video.path')} /> : <p>No Video to View</p>}
 
+                                </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2
+
+                                }}>
+                                    {watch('image') ? <img width={300} src={watch('image')} /> : <p>No Image to View</p>}
+                                    <label htmlFor="image-upload">
+                                        <Button variant="outlined" component="span">
+                                            Upload Image
+                                        </Button>
+                                    </label>
                                     <input type='file'
-                                        accept='video/*'
+                                        id='image-upload'
+                                        accept='image/*'
+                                        style={{ display: 'none' }}
                                         onChange={(e) => {
                                             const file = e.target.files?.[0]
-                                            setVideoFile(file ?? null);
+                                            setImageFile(file ?? null);
                                             if (file) {
-                                                setValue('video.path', URL.createObjectURL(file))
+                                                setValue('image', URL.createObjectURL(file))
                                             }
                                         }}
                                     />
                                     <input
                                         hidden
-                                        {...register("video.path", {
+                                        {...register("image", {
                                             required: true,
                                         })}
                                     />
-                                    {errors?.video?.path?.type === "required" && (
-                                        <p className='error_msg'>Video is required !</p>
+                                    {errors?.image?.type === "required" && (
+                                        <p className='error_msg'>Image is required !</p>
                                     )}
-                                </Stack>
+                                </Box>
                             </Box>
+
+                            {/* <Typography sx={{ pt: 4 }} variant="h6">New Video</Typography>
+
+                            <Box sx={{
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                borderColor: '#bdbdbd',
+                                padding: 5,
+                                marginBottom: 4,
+                                gap: '16px'
+                            }}>
+                                <Stack spacing={4}>
+                                    
+                                    
+                                </Stack>
+                            </Box> */}
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 <Link href={'/dashboard/deals'}>

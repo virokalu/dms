@@ -29,7 +29,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     // const [imageFile, setImageFile] = useState<File | null>(null);
     // const [imageLink, setImageLink] = useState<string | null>(null);
     const [mediaList, setmediaList] = useState<Media[]>([]);
-    
+
     //Handle Notification
     const { back } = useRouter();
     useEffect(() => {
@@ -116,7 +116,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                     }
 
                 } else {
-                    
+
                     formData.append(`hotels[${index}].medias[${mediaIndex}].path`, media.path)
                 }
                 formData.append(`hotels[${index}].medias[${mediaIndex}].alt`, media.alt);
@@ -146,10 +146,15 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
         }
         const res = await updateImage(imageFile);
         if (res.type == "success") {
-            window.location.reload();
-        } else {
-            Notify(res.type, res.message);
-        }
+            //window.location.reload();
+            setValue(`image`, URL.createObjectURL(file));
+        } 
+        Notify(res.type, res.message);
+    };
+
+    //Check that the image has a extension or not
+    const hasExtension = (path: string): boolean => {
+        return !!path && path.includes('.') && !path.endsWith('.');
     };
 
     //HandleImageEdit
@@ -160,10 +165,10 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
         }
         const res = await updateVideo(imageFile);
         if (res.type == "success") {
-            window.location.reload();
-        } else {
-            Notify(res.type, res.message);
+            //window.location.reload();
+            setValue(`video.path`, URL.createObjectURL(file));
         }
+        Notify(res.type, res.message);
     };
 
     return (
@@ -240,52 +245,47 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 <p className='error_msg'>URL links only !</p>
                             )} */}
 
-                            {watch('image') ? <img width={300} src={`${API}/${watch('image')}`} /> : <p>No Image to View</p>}
-
-                            <span><b>Update the Image</b></span>
-                            <input
-                                accept='image/*'
-                                type='file'
-                                onChange={(e) => {
-                                    const file = e.target.files?.[0] ?? null
-                                    if (file) {
-                                        handleImageEdit(file)
-                                    }
-                                }}
-                            />
-
-                            <Typography sx={{ pt: 4 }} variant="h6">Update Video</Typography>
                             <Box sx={{
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                borderColor: '#bdbdbd',
-                                padding: 5,
-                                marginBottom: 4,
-                                gap: '16px'
+                                display: 'flex',
+                                flexDirection: {
+                                    xs: 'column',
+                                    sm: 'row'
+                                },
+                                // alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: 8
                             }}>
-                                <Stack spacing={2}>
-                                    <label htmlFor='videoAlt'>Video Alt</label>
-                                    <input
-                                        id="videoAlt"
-                                        className='text_input'
-                                        placeholder='Alt...'
-                                        {...register("video.alt", {
-                                            required: true,
-                                            pattern: /^[A-Za-z\s]+$/i
-                                        })}
-                                    />
 
-                                    {errors?.video?.alt?.type === "required" && (
-                                        <p className='error_msg'>Alt is required !</p>
-                                    )}
-                                    {errors?.video?.alt?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2
+                                }}>
 
-                                    {watch('video.path') ? <video autoPlay loop width={300} src={`${API}/${watch('video.path')}`} /> : <p>No Video to View</p>}
+                                    {watch('video.path') ? <video autoPlay loop width={300} src={
+                                        hasExtension(watch('video.path')) ? `${API}/${watch('video.path')}`
+                                            : watch('video.path')
+                                    } /> : <p>No Video to View</p>}
+
+                                    {/* {watch('video.path') ? <Box>
+                                        {
+                                            hasExtension(watch('video.path')) ? <video autoPlay loop width={300} src={`${API}/${watch('video.path')}`} /> : 
+                                            <video autoPlay loop width={300} src={watch('video.path')} />
+                                        }
+                                    </Box> : <p>No Video to View</p>} */}
 
                                     <span><b>Update the Video</b></span>
 
+                                    <label htmlFor="video-upload">
+                                        <Button variant="outlined" component="span">
+                                            Update Video
+                                        </Button>
+                                    </label>
                                     <input type='file'
+                                        id="video-upload"
+
                                         accept='video/*'
+                                        style={{ display: 'none' }}
                                         onChange={(e) => {
                                             const file = e.target.files?.[0] ?? null
                                             if (file) {
@@ -302,8 +302,68 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                     {errors?.video?.path?.type === "required" && (
                                         <p className='error_msg'>Video is required !</p>
                                     )}
-                                </Stack>
+                                    <label htmlFor='videoAlt'>Video Alt</label>
+                                    <input
+                                        id="videoAlt"
+                                        className='text_input'
+                                        placeholder='Alt...'
+                                        {...register("video.alt", {
+                                            required: true,
+                                            pattern: /^[A-Za-z\s]+$/i
+                                        })}
+                                    />
+
+                                    {errors?.video?.alt?.type === "required" && (
+                                        <p className='error_msg'>Alt is required !</p>
+                                    )}
+                                    {errors?.video?.alt?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
+
+                                </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2
+                                }}>
+                                    {watch('image') ? <img width={300} src={
+                                        hasExtension(watch('image')) ? `${API}/${watch('image')}`
+                                            : watch('image')
+                                    } /> : <p>No Image to View</p>}
+
+                                    <span><b>Update the Image</b></span>
+                                    <label htmlFor="image-upload">
+                                        <Button variant="outlined" component="span">
+                                            Update Image
+                                        </Button>
+                                    </label>
+                                    <input type='file'
+                                        id='image-upload'
+                                        style={{ display: 'none' }}
+                                        accept='image/*'
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0] ?? null
+                                            if (file) {
+                                                handleImageEdit(file)
+                                            }
+                                        }}
+                                    />
+                                </Box>
                             </Box>
+
+
+
+                            {/* <Typography sx={{ pt: 4 }} variant="h6">Update Video</Typography>
+                            <Box sx={{
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                borderColor: '#bdbdbd',
+                                padding: 5,
+                                marginBottom: 4,
+                                gap: '16px'
+                            }}>
+                                <Stack spacing={2}>
+                                    
+                                </Stack>
+                            </Box> */}
 
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 <Link href={'/dashboard/deals'}>
