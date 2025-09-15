@@ -15,6 +15,7 @@ const steps = ['Update Deal Details', 'Update Hotels'];
 
 export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel, API: string }) {
     const [state, updateDealAction] = useActionState(updateHotelDeal, {
+        id: sentDeal.id,
         type: "",
         message: "",
     });
@@ -30,7 +31,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     const [mediaList, setmediaList] = useState<Media[]>([]);
     
     //Handle Notification
-    const { back, refresh } = useRouter();
+    const { back } = useRouter();
     useEffect(() => {
 
         // console.log(watch('image'))
@@ -38,6 +39,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
         //     setImageLink(`${API}/${sentDeal.image}`);
 
         Notify(state.type, state.message);
+        console.log(state.message)
         // Notify(imgstate.type, imgstate.message);
         if (state.type == "success") {
             back();
@@ -50,7 +52,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     }, [state])
 
     //ReactHookForm Yup Validation
-    const { control, register, trigger, handleSubmit, setValue , formState: { errors, isDirty }, watch } = useForm<UpdateDealModel>(
+    const { control, register, trigger, handleSubmit, setValue, formState: { errors, isDirty }, watch } = useForm<UpdateDealModel>(
         {
             defaultValues: sentDeal
         }
@@ -77,10 +79,59 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
     //Handle Submission
     const onSubmit: SubmitHandler<UpdateDealModel> = (data) => {
-        // 
         console.log(data)
+        const formData = new FormData();
+
+        formData.append("slug", data.slug);
+        formData.append("name", data.name);
+        formData.append('video.alt', data.video.alt);
+
+        data.hotels.forEach((hotel, index) => {
+            formData.append(`hotels[${index}].id`, hotel.id);
+            formData.append(`hotels[${index}].name`, hotel.name);
+            formData.append(`hotels[${index}].rate`, hotel.rate.toString());
+            formData.append(`hotels[${index}].amenities`, hotel.amenities);
+            hotel.medias.forEach((media, mediaIndex) => {
+                if (media.isUpdated) {
+                    const mediaFile = mediaList.find(item => item.fieldId == media.fieldId)?.mediaFile;
+                    // if (mediaFile != null) {
+                    //     const mediaData: Media = {
+                    //         mediaFile: mediaFile,
+                    //         alt: media.alt,
+                    //         fieldId: "",
+                    //         path: "",
+                    //         isVideo: false
+                    //     }
+                    //     formData.append(`hotels[${index}].medias[${mediaIndex}]`, mediaData)
+                    // }else{
+                    //     console.log(`File not fonud with alt ${media.alt}`);
+                    //     return
+                    // }
+
+                    if (mediaFile) {
+                        console.log(mediaFile);
+                        formData.append(`hotels[${index}].medias[${mediaIndex}].mediaFile`, mediaFile);
+                    } else {
+                        console.warn(`Missing mediaFile for fieldId ${media.fieldId}`);
+                    }
+
+                } else {
+                    
+                    formData.append(`hotels[${index}].medias[${mediaIndex}].path`, media.path)
+                }
+                formData.append(`hotels[${index}].medias[${mediaIndex}].alt`, media.alt);
+            })
+        });
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        startTransition(() => {
+            updateDealAction(formData);
+        })
+        // console.log(formData)
     };
-    const onError: SubmitErrorHandler<UpdateDealModel> = (errors) => console.log("errors")
+    const onError: SubmitErrorHandler<UpdateDealModel> = (errors) => console.log(errors)
 
     //Handle Delete
     const handleHotelDeleted = (deletedHotelId: number) => {
@@ -339,14 +390,16 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
                                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({ id: '0', name: '', rate: 0, amenities: '',medias: [{
+                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({
+                                                    id: '0', name: '', rate: 0, amenities: '', medias: [{
                                                         fieldId: '',
                                                         mediaFile: null,
                                                         alt: '',
                                                         path: '',
                                                         isVideo: false,
                                                         isUpdated: true
-                                                    }] })}>Add Hotel</Button> : null}
+                                                    }]
+                                                })}>Add Hotel</Button> : null}
                                                 {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                                 {watch(`hotels.${index}.id`) != '0' ? <DeleteHotel id={watch(`hotels.${index}.id`)} onDeleted={() => handleHotelDeleted(index)} /> : null}
                                             </Box>

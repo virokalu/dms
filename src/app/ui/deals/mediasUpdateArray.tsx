@@ -6,7 +6,7 @@ import { Control, useFieldArray } from "react-hook-form";
 const Video = ["mp4", "avi", "mov", "webm"];
 
 
-export default ({ nestIndex, control, register, errors, watch, setValue, setmediaList, API }: { nestIndex: number, control: Control<UpdateDealModel, any, UpdateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any, API:string }) => {
+export default ({ nestIndex, control, register, errors, watch, setValue, setmediaList, API }: { nestIndex: number, control: Control<UpdateDealModel, any, UpdateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any, API: string }) => {
     const { fields, remove, append } = useFieldArray({
         control,
         name: `hotels.${nestIndex}.medias`
@@ -42,8 +42,10 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                 : fields.map((field, index) => {
 
                     // const isImage = Image.includes(field.path.split('.').pop()!)
-                    const isVideo = Video.includes(field.path.split('.').pop()!)
-                    field.isVideo = isVideo                    
+                    if (field.path) {
+                        const isVideo = Video.includes(field.path.split('.').pop()!)
+                        field.isVideo = isVideo
+                    }
 
                     return (
                         <Box
@@ -77,7 +79,7 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                         {field.isUpdated ?
                                             !field.isVideo ? <img width={300} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} />
                                                 : <video autoPlay width={300} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} />
-                                        :   !field.isVideo ? <img width={300} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} />
+                                            : !field.isVideo ? <img width={300} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} />
                                                 : <video autoPlay width={300} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} />
                                         }
                                     </Box>
@@ -92,18 +94,19 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
 
                                         const file = e.target.files?.[0]
                                         // setVideoFile(file ?? null);
-                                        const media: Media = {
-                                            fieldId: field.id,
-                                            mediaFile: file,
-                                            alt: "",
-                                            path: "",
-                                            isVideo: false
-                                        }
-
-                                        setmediaList((prev: Media[]) => [...prev, media])
 
                                         if (file) {
-                                            field.isUpdated = true
+                                            const media: Media = {
+                                                fieldId: field.id,
+                                                mediaFile: file,
+                                                alt: "",
+                                                path: "",
+                                                isVideo: false
+                                            }
+
+                                            // field.isUpdated = true
+                                            setValue(`hotels.[${nestIndex}].medias.[${index}].isUpdated`, true)
+                                            setmediaList((prev: Media[]) => [...prev, media])
                                             setValue(`hotels.[${nestIndex}].medias.[${index}].path`, URL.createObjectURL(file))
                                         }
                                     }}
