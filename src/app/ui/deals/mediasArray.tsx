@@ -89,7 +89,9 @@ export default forwardRef((props: { nestIndex: number, control: Control<CreateDe
                                                 setmediaList((prev: Media[]) => prev.filter((item: Media) => item.fieldId !== field.id))
                                                 remove(index)
                                             }
-                                        }>Remove {field.isVideo ? 'Video' : 'Image'}</Button> : null}
+                                        }>Remove 
+                                        {/* {field.isVideo ? 'Video' : 'Image'} */}
+                                        </Button> : null}
                                     </Box>
                                 </Box>
                                 <Box>

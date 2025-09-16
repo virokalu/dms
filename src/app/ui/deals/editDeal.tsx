@@ -262,10 +262,10 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                     gap: 2
                                 }}>
 
-                                    {watch('video.path') ? <video autoPlay loop width={300} src={
+                                    {watch('video.path') ? <><video autoPlay loop width={300} src={
                                         hasExtension(watch('video.path')) ? `${API}/${watch('video.path')}`
                                             : watch('video.path')
-                                    } /> : <p>No Video to View</p>}
+                                    } /></> : <p>No Video to View</p>}
 
                                     {/* {watch('video.path') ? <Box>
                                         {
@@ -324,10 +324,10 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                     flexDirection: 'column',
                                     gap: 2
                                 }}>
-                                    {watch('image') ? <img width={300} src={
+                                    {watch('image') ? <><img width={300} src={
                                         hasExtension(watch('image')) ? `${API}/${watch('image')}`
                                             : watch('image')
-                                    } /> : <p>No Image to View</p>}
+                                    } /></> : <p>No Image to View</p>}
 
                                     <span><b>Update the Image</b></span>
                                     <label htmlFor="image-upload">
@@ -448,18 +448,19 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                             <Typography variant="h6">Update Media</Typography>
                                             <MediasUpdateArray API={API} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
 
-                                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
+                                            <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({
+                                                {index == fields.length - 1 ? <><Button variant="outlined" onClick={() => append({
                                                     id: '0', name: '', rate: 0, amenities: '', medias: [{
                                                         fieldId: '',
                                                         mediaFile: null,
                                                         alt: '',
                                                         path: '',
                                                         isVideo: false,
-                                                        isUpdated: true
+                                                        isUpdated: true,
+                                                        id: '0'
                                                     }]
-                                                })}>Add Hotel</Button> : null}
+                                                })}>Add Hotel</Button></> : null}
                                                 {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                                 {watch(`hotels.${index}.id`) != '0' ? <DeleteHotel id={watch(`hotels.${index}.id`)} onDeleted={() => handleHotelDeleted(index)} /> : null}
                                             </Box>

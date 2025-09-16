@@ -36,6 +36,7 @@ export type Media ={
 }
 
 export type UpdateMedia ={
+    id: string;
     fieldId: string;
     mediaFile: File | undefined | null;
     alt: string;
