@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { Deal, ImageFile, UpdateDealModel } from "./definitions";
+import { Deal, ImageFile, UpdateDealModel, UpdateMedia } from "./definitions";
 
 const API = new URL(`${process.env.API_URL}api/deal`);
 const Hotel_API = new URL(`${process.env.API_URL}api/hotel`);
@@ -235,6 +235,61 @@ export async function deleteHotel(prevState: {
 
   const res = await fetch(`${Hotel_API}/${prevState.id}`, {
     method: "DELETE",
+  });
+  if (!res.ok) {
+    const msg = (await res.text()).split("\n").join(",");
+    return {
+      id: prevState.id,
+      type: "error",
+      message: `${msg || "Something went wrong"}`,
+    };
+  } else {
+    return {
+      id: prevState.id,
+      type: "success",
+      message: "Hotel deleted successfully",
+    };
+  }
+}
+
+export async function updateMedia(id: string, data: UpdateMedia){
+  //Create FormData
+  const formData = new FormData();
+  formData.append("mediaFile", data.mediaFile!);
+  formData.append("id", data.id);
+  
+  const res = await fetch(`${Hotel_API}/media/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
+  if (!res.ok) {
+    const msg = (await res.text()).split("\n").join(",");
+    return {
+      type: "error",
+      message: `${msg}`,
+    };
+  } else {
+    const deal: Deal = await res.json();
+    // revalidatePath(`/dashboard/deals/${deal.slug}/edit`);
+    return {
+      type: "success",
+      message: "Image updated successfully",
+    };
+  }
+}
+
+export async function deleteMedia(prevState: {
+  id: string;
+  type: string;
+  message: string;
+},
+ data: UpdateMedia
+): Promise<{ id: string; type: string; message: string }> {
+  // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+
+  const res = await fetch(`${Hotel_API}/media/${prevState.id}`, {
+    method: "DELETE",
+    body: JSON.stringify(data),
   });
   if (!res.ok) {
     const msg = (await res.text()).split("\n").join(",");
