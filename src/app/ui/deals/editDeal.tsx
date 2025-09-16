@@ -202,8 +202,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 flexDirection: 'column',
                                 gap: 2,
                                 pt: 2,
-                            }}
-                        >
+                            }}>
                             <label htmlFor="slug">Slug</label>
                             <input
                                 readOnly
@@ -262,10 +261,10 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                     gap: 2
                                 }}>
 
-                                    {watch('video.path') ? <><video autoPlay loop width={300} src={
+                                    {watch('video.path') ? <Box><video autoPlay loop width={300} src={
                                         hasExtension(watch('video.path')) ? `${API}/${watch('video.path')}`
                                             : watch('video.path')
-                                    } /></> : <p>No Video to View</p>}
+                                    } /></Box> : <p>No Video to View</p>}
 
                                     {/* {watch('video.path') ? <Box>
                                         {
@@ -324,10 +323,10 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                     flexDirection: 'column',
                                     gap: 2
                                 }}>
-                                    {watch('image') ? <><img width={300} src={
+                                    {watch('image') ? <Box><img width={300} src={
                                         hasExtension(watch('image')) ? `${API}/${watch('image')}`
                                             : watch('image')
-                                    } /></> : <p>No Image to View</p>}
+                                    } /></Box> : <p>No Image to View</p>}
 
                                     <span><b>Update the Image</b></span>
                                     <label htmlFor="image-upload">

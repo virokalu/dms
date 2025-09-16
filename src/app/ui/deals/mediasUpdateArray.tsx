@@ -119,12 +119,12 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                     {/* Media Buttons */}
                                     <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
                                         {watch(`hotels.[${nestIndex}].medias.[${index}].id`) == '0' ? null :
-                                            <label htmlFor="media-update">
+                                            <Box><label htmlFor="media-update">
                                                 <Button variant="outlined" component="span">
                                                     Update
                                                     {/* {field.isVideo ? 'Video' : 'Image'} */}
                                                 </Button>
-                                            </label>
+                                            </label></Box>
                                         }
                                         <input
                                             type='file'
@@ -181,16 +181,19 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                                 isUpdated: true
                                             }
                                         )}>Add Video</Button> : null} */}
-                                        {fields.length > 1 && watch(`hotels.[${nestIndex}].medias.[${index}].id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={
-                                            () => {
-                                                setmediaList((prev: Media[]) => prev.filter((item: Media) => item.fieldId !== field.id))
-                                                remove(index)
-                                            }
-                                        }>Remove
-                                            {/* {field.isVideo ? 'Video' : 'Image'} */}
-                                        </Button> : null}
-                                        {watch(`hotels.[${nestIndex}].medias.[${index}].id`) != '0' ? <DeleteMedia id={watch(`hotels.[${nestIndex}].medias.[${index}].id`)} onDeleted={
-                                            () => handleMediaDeleted(index)} hotelId={watch(`hotels.[${nestIndex}].id`)} /> : null}
+                                        {fields.length > 1 && watch(`hotels.[${nestIndex}].medias.[${index}].id`) == '0' ?
+                                            <Box><Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={
+                                                () => {
+                                                    setmediaList((prev: Media[]) => prev.filter((item: Media) => item.fieldId !== field.id))
+                                                    remove(index)
+                                                }
+                                            }>Remove
+                                                {/* {field.isVideo ? 'Video' : 'Image'} */}
+                                            </Button></Box> : null}
+                                        {watch(`hotels.[${nestIndex}].medias.[${index}].id`) != '0' ? <Box>
+                                            <DeleteMedia id={watch(`hotels.[${nestIndex}].medias.[${index}].id`)} onDeleted={
+                                                () => handleMediaDeleted(index)} hotelId={watch(`hotels.[${nestIndex}].id`)} />
+                                        </Box> : null}
                                     </Box>
                                 </Box>
                                 <Box>
