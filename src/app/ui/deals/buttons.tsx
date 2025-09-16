@@ -123,3 +123,63 @@ export function DeleteHotel({ id, onDeleted }: { id: string; onDeleted: () => vo
         </React.Fragment>
     )
 }
+
+export function DeleteMedia({ id, hotelId, onDeleted }: { id: string; hotelId:string; onDeleted: () => void }) {
+    const [state, deleteHotelAction] = useActionState(deleteHotel, {
+        id: id,
+        type: "",
+        message: "",
+    });
+    const router = useRouter();
+    useEffect(() => {
+        Notify(state.type, state.message);
+        if (state.type == "success") {
+            onDeleted();
+        }
+    }, [state, router])
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    //() => startTransition(() => deleteHotelAction())
+
+    return (
+        <React.Fragment>
+            <Button sx={{ ml: 2 }} variant="outlined" color="error" onClick={handleClickOpen} className="p-2 hover:bg-gray-100">
+                <span className="sr-only">Delete</span>
+                <DeleteIcon sx={{ color: pink[500] }} />
+            </Button>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Delete the Hotel
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Do you want to delete the hotel?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" onClick={handleClose}>No</Button>
+                    <Button color="error" variant="outlined" onClick={() => startTransition(()=>{
+                        deleteHotelAction();
+                        setOpen(false);
+                        })} autoFocus>
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </React.Fragment>
+    )
+}
