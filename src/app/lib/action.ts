@@ -287,9 +287,12 @@ export async function deleteMedia(prevState: {
 ): Promise<{ id: string; type: string; message: string }> {
   // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
+  console.log(JSON.stringify(data))
+  console.log(prevState.id)
   const res = await fetch(`${Hotel_API}/media/${prevState.id}`, {
     method: "DELETE",
     body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" },
   });
   if (!res.ok) {
     const msg = (await res.text()).split("\n").join(",");

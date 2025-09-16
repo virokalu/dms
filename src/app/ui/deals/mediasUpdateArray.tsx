@@ -1,6 +1,7 @@
 import { Media, UpdateDealModel } from "@/app/lib/definitions";
 import { Box, Button, Stack } from "@mui/material";
 import { Control, useFieldArray } from "react-hook-form";
+import { DeleteMedia } from "./buttons";
 
 // const Image = ["jpg", "jpeg", "png"];
 const Video = ["mp4", "avi", "mov", "webm"];
@@ -11,6 +12,11 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
         control,
         name: `hotels.${nestIndex}.medias`
     })
+
+    const handleMediaDeleted = (deletedMediaId: number) => {
+        remove(deletedMediaId)
+    };
+
     return (
         <Box>
             {/* {fields.length == 0 ?
@@ -160,7 +166,7 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                         }>Remove
                                             {/* {field.isVideo ? 'Video' : 'Image'} */}
                                         </Button> : null}
-                                        {/* {watch(`hotels.[${nestIndex}].medias.[${index}].id`) == '0' ? <DeleteMedia id={watch(`hotels.${index}.id`)} onDeleted={() => handleMediaDeleted(index)} /> : null } */}
+                                        {watch(`hotels.[${nestIndex}].medias.[${index}].id`) != '0' ? <DeleteMedia id={watch(`hotels.[${nestIndex}].medias.[${index}].id`)} onDeleted={() => handleMediaDeleted(index)} hotelId={watch(`hotels.[${nestIndex}].id`)} /> : null }
                                     </Box>
                                 </Box>
                                 <Box>
