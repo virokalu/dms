@@ -252,10 +252,10 @@ export async function deleteHotel(prevState: {
   }
 }
 
-export async function updateMedia(id: string, data: UpdateMedia){
+export async function updateMedia(id: string, data: ImageFile){
   //Create FormData
   const formData = new FormData();
-  formData.append("mediaFile", data.mediaFile!);
+  formData.append("mediaFile", data.imageFile);
   formData.append("id", data.id);
   
   const res = await fetch(`${Hotel_API}/media/${id}`, {

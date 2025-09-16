@@ -1,7 +1,9 @@
-import { Media, UpdateDealModel } from "@/app/lib/definitions";
+import { ImageFile, Media, UpdateDealModel } from "@/app/lib/definitions";
 import { Box, Button, Stack } from "@mui/material";
 import { Control, useFieldArray } from "react-hook-form";
 import { DeleteMedia } from "./buttons";
+import Notify from "../notify";
+import { updateMedia } from "@/app/lib/action";
 
 // const Image = ["jpg", "jpeg", "png"];
 const Video = ["mp4", "avi", "mov", "webm"];
@@ -13,8 +15,28 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
         name: `hotels.${nestIndex}.medias`
     })
 
+    //HandleMediaDelete
     const handleMediaDeleted = (deletedMediaId: number) => {
         remove(deletedMediaId)
+    };
+
+    //HandleImageEdit
+    const handleMediaEdit = async (mediaId: string, file: File, mediaIndex: number, field: any) => {
+        const imageFile: ImageFile = {
+            id: mediaId,
+            imageFile: file,
+        }
+        const res = await updateMedia(watch(`hotels.${nestIndex}.id`), imageFile);
+        if (res.type == "success") {
+            //window.location.reload();
+            // setValue(`image`, URL.createObjectURL(file));
+
+            field.isUpdated = true
+            setValue(`hotels.[${nestIndex}].medias.[${mediaIndex}].isUpdated`, true)
+            setValue(`hotels.[${nestIndex}].medias.[${mediaIndex}].path`, URL.createObjectURL(file))
+
+        }
+        Notify(res.type, res.message);
     };
 
     return (
@@ -126,11 +148,12 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                                     //     path: "",
                                                     //     isVideo: false
                                                     // }
+                                                    handleMediaEdit(watch(`hotels.[${nestIndex}].medias.[${index}].id`), file, index, field)
 
-                                                    field.isUpdated = true
-                                                    setValue(`hotels.[${nestIndex}].medias.[${index}].isUpdated`, true)
-                                                    // setmediaList((prev: Media[]) => [...prev, media])
-                                                    setValue(`hotels.[${nestIndex}].medias.[${index}].path`, URL.createObjectURL(file))
+                                                    // field.isUpdated = true
+                                                    // setValue(`hotels.[${nestIndex}].medias.[${index}].isUpdated`, true)
+                                                    // // setmediaList((prev: Media[]) => [...prev, media])
+                                                    // setValue(`hotels.[${nestIndex}].medias.[${index}].path`, URL.createObjectURL(file))
                                                 }
                                             }}
                                         />
@@ -166,7 +189,8 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                         }>Remove
                                             {/* {field.isVideo ? 'Video' : 'Image'} */}
                                         </Button> : null}
-                                        {watch(`hotels.[${nestIndex}].medias.[${index}].id`) != '0' ? <DeleteMedia id={watch(`hotels.[${nestIndex}].medias.[${index}].id`)} onDeleted={() => handleMediaDeleted(index)} hotelId={watch(`hotels.[${nestIndex}].id`)} /> : null }
+                                        {watch(`hotels.[${nestIndex}].medias.[${index}].id`) != '0' ? <DeleteMedia id={watch(`hotels.[${nestIndex}].medias.[${index}].id`)} onDeleted={
+                                            () => handleMediaDeleted(index)} hotelId={watch(`hotels.[${nestIndex}].id`)} /> : null}
                                     </Box>
                                 </Box>
                                 <Box>
