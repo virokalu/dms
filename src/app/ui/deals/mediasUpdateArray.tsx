@@ -1,15 +1,24 @@
-import { ImageFile, Media, UpdateDealModel } from "@/app/lib/definitions";
+import { CreateDealModel, ImageFile, Media, UpdateDealModel } from "@/app/lib/definitions";
 import { Box, Button, Stack } from "@mui/material";
 import { Control, useFieldArray } from "react-hook-form";
 import { DeleteMedia } from "./buttons";
 import Notify from "../notify";
 import { updateMedia } from "@/app/lib/action";
+import { forwardRef, useImperativeHandle } from "react";
 
 // const Image = ["jpg", "jpeg", "png"];
 const Video = ["mp4", "avi", "mov", "webm"];
 
 
-export default ({ nestIndex, control, register, errors, watch, setValue, setmediaList, API }: { nestIndex: number, control: Control<UpdateDealModel, any, UpdateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any, API: string }) => {
+export default forwardRef((props: { nestIndex: number, control: Control<UpdateDealModel, any, UpdateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any, API: string }, ref) => {
+    const { nestIndex, control, register, errors, watch, setValue, setmediaList, API } = props;
+
+    useImperativeHandle(ref, () => ({
+        mediaAppend: append,
+        mediafields: fields
+    }));
+
+// ({ nestIndex, control, register, errors, watch, setValue, setmediaList, API }: { nestIndex: number, control: Control<UpdateDealModel, any, UpdateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any, API: string }) => {
     const { fields, remove, append } = useFieldArray({
         control,
         name: `hotels.${nestIndex}.medias`
@@ -291,4 +300,4 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
             })}
         </Box>
     );
-};
+});

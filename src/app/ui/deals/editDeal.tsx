@@ -2,7 +2,7 @@
 import { UpdateDealModel, ImageFile, Media } from "@/app/lib/definitions";
 import { Box, Button, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import Link from "next/link";
-import { startTransition, useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import Notify from "../notify";
 import { updateHotelDeal, updateImage, updateVideo } from "@/app/lib/action";
 import { useRouter } from "next/navigation";
@@ -148,7 +148,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
         if (res.type == "success") {
             //window.location.reload();
             setValue(`image`, URL.createObjectURL(file));
-        } 
+        }
         Notify(res.type, res.message);
     };
 
@@ -169,6 +169,51 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
             setValue(`video.path`, URL.createObjectURL(file));
         }
         Notify(res.type, res.message);
+    };
+
+    // Media File Handle
+    const mediaUpdateRef = useRef<any>(null);
+
+    const handleFiles = (e: React.ChangeEvent<HTMLInputElement>, hotelIndex: number) => {
+        const files = Array.from(e.target.files || []);
+        // console.log(files.length);
+        const newMedia = files.map((file, i) => {
+            mediaUpdateRef.current?.mediaAppend(
+                {
+                    id: '0',
+                    fieldId: '',
+                    mediaFile: null,
+                    alt: '',
+                    path: '',
+                    isUpdated: true,
+                    isVideo: false,
+
+                }
+            );
+            const id = `${Date.now()}-${i}`;
+            const path = URL.createObjectURL(file);
+
+            return {
+                fieldId: id,
+                mediaFile: file,
+                alt: "",
+                path,
+                isVideo: file.type.startsWith('video/'),
+            } as Media;
+        });
+
+        setmediaList(prev => [...prev, ...newMedia]);
+        // console.log(newMedia.length)
+
+        newMedia.forEach((media, i) => {
+
+            // console.log(i)
+            setValue(`hotels.${hotelIndex}.medias.${mediaUpdateRef.current?.mediafields.length + i}.path`, media.path);
+            setValue(`hotels.${hotelIndex}.medias.${mediaUpdateRef.current?.mediafields.length + i}.id`, '0');
+            setValue(`hotels.${hotelIndex}.medias.${mediaUpdateRef.current?.mediafields.length + i}.fieldId`, media.fieldId);
+            setValue(`hotels.${hotelIndex}.medias.${mediaUpdateRef.current?.mediafields.length + i}.isVideo`, media.isVideo);
+
+        });
     };
 
     return (
@@ -445,11 +490,29 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                             )}
 
                                             <Typography variant="h6">Update Media</Typography>
-                                            <MediasUpdateArray API={API} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
+                                            <MediasUpdateArray ref={mediaUpdateRef} API={API} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
 
                                             <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+                                                <label htmlFor="medias-upload" >
+                                                    <Button variant='outlined' component="span" >Upload Media</Button>
+                                                </label>
+                                                <input
+                                                    accept='video/*, image/*'
+                                                    id='medias-upload'
+                                                    multiple
+                                                    type='file'
+                                                    style={{ display: 'none' }}
+                                                    onChange={(e) => handleFiles(e, index)}
+                                                />
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <><Button variant="outlined" onClick={() => append({
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    gap: 2,
+                                                    flexDirection: {
+                                                        sm: 'row',
+                                                        xs: 'column'
+                                                    }
+                                                }}>{index == fields.length - 1 ? <><Button variant="outlined" onClick={() => append({
                                                     id: '0', name: '', rate: 0, amenities: '', medias: [{
                                                         fieldId: '',
                                                         mediaFile: null,
@@ -460,8 +523,9 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                                         id: '0'
                                                     }]
                                                 })}>Add Hotel</Button></> : null}
-                                                {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
-                                                {watch(`hotels.${index}.id`) != '0' ? <DeleteHotel id={watch(`hotels.${index}.id`)} onDeleted={() => handleHotelDeleted(index)} /> : null}
+                                                    {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
+                                                    {watch(`hotels.${index}.id`) != '0' ? <DeleteHotel id={watch(`hotels.${index}.id`)} onDeleted={() => handleHotelDeleted(index)} /> : null}
+                                                </Box>
                                             </Box>
                                         </Grid>
                                     </Box>
