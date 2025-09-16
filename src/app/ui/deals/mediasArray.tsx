@@ -1,8 +1,17 @@
-import { CreateDealModel, Hotel, Media } from "@/app/lib/definitions";
+import { CreateDealModel, Media } from "@/app/lib/definitions";
 import { Box, Button, Stack } from "@mui/material";
+import { forwardRef, useImperativeHandle } from "react";
 import { Control, useFieldArray } from "react-hook-form";
 
-export default ({ nestIndex, control, register, errors, watch, setValue, setmediaList }: { nestIndex: number, control: Control<CreateDealModel, any, CreateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any }) => {
+export default forwardRef((props: { nestIndex: number, control: Control<CreateDealModel, any, CreateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any }, ref) => {
+    const { nestIndex, control, register, errors, watch, setValue, setmediaList } = props;
+
+    useImperativeHandle(ref, () => ({
+        mediaAppend: append
+    }));
+
+
+    // ({ nestIndex, control, register, errors, watch, setValue, setmediaList }: { nestIndex: number, control: Control<CreateDealModel, any, CreateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any }) => {
     const { fields, remove, append } = useFieldArray({
         control,
         name: `hotels.${nestIndex}.medias`
@@ -51,13 +60,44 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                     )}
                                     {errors?.hotels?.[nestIndex]?.medias?.[index]?.alt?.type === "pattern" && <p className='error_msg'>Alphabetical characters only !</p>}
 
+
+                                    {/* Media Buttons */}
+                                    <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+                                        <Box sx={{ flex: '1 1 auto' }} />
+                                        {/* {index == fields.length - 1 ?
+                                    <Button variant="outlined" onClick={() => append(
+                                        {
+                                            fieldId: '',
+                                            mediaFile: null,
+                                            alt: '',
+                                            path: '',
+                                            isVideo: false,
+                                        }
+                                    )}>Add Image</Button> : null}
+                                        {index == fields.length - 1 ?
+                                    <Button sx={{ ml: 2 }} variant="outlined" onClick={() => append(
+                                        {
+                                            fieldId: '',
+                                            mediaFile: null,
+                                            alt: '',
+                                            path: '',
+                                            isVideo: true,
+                                        }
+                                    )}>Add Video</Button> : null} */}
+                                        {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={
+                                            () => {
+                                                setmediaList((prev: Media[]) => prev.filter((item: Media) => item.fieldId !== field.id))
+                                                remove(index)
+                                            }
+                                        }>Remove {field.isVideo ? 'Video' : 'Image'}</Button> : null}
+                                    </Box>
                                 </Box>
                                 <Box>
                                     {watch(`hotels.[${nestIndex}].medias.[${index}].path`) ?
                                         <Box sx={{
                                             width: 200,
                                             marginRight: {
-                                                sm:2
+                                                sm: 2
                                             }
                                         }}>
                                             {
@@ -72,8 +112,8 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                         : <Box sx={{
                                             width: 200,
                                             marginLeft: {
-                                                sm:2,
-                                                xs:10
+                                                sm: 2,
+                                                xs: 10
                                             },
                                             justifyContent: 'center'
                                         }}>
@@ -133,42 +173,10 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                 {...register(`hotels.[${nestIndex}].medias.[${index}].hotelId`, {
                                 })}
                             /> */}
-
-
-                            {/* Media Buttons */}
-                            <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
-                                <Box sx={{ flex: '1 1 auto' }} />
-                                {/* {index == fields.length - 1 ?
-                                    <Button variant="outlined" onClick={() => append(
-                                        {
-                                            fieldId: '',
-                                            mediaFile: null,
-                                            alt: '',
-                                            path: '',
-                                            isVideo: false,
-                                        }
-                                    )}>Add Image</Button> : null}
-                                {index == fields.length - 1 ?
-                                    <Button sx={{ ml: 2 }} variant="outlined" onClick={() => append(
-                                        {
-                                            fieldId: '',
-                                            mediaFile: null,
-                                            alt: '',
-                                            path: '',
-                                            isVideo: true,
-                                        }
-                                    )}>Add Video</Button> : null} */}
-                                {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={
-                                    () => {
-                                        setmediaList((prev: Media[]) => prev.filter((item: Media) => item.fieldId !== field.id))
-                                        remove(index)
-                                    }
-                                }>Remove {field.isVideo ? 'Video' : 'Image'}</Button> : null}
-                            </Box>
                         </Stack>
                     </Box>
                 )
             })}
         </Box>
     );
-};
+});

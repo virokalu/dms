@@ -2,7 +2,7 @@
 import { Box, Button, Grid, Stack, Step, StepLabel, Stepper, Typography } from '@mui/material'
 import Link from 'next/link';
 import { createDeal } from '@/app/lib/action';
-import { startTransition, useActionState, useEffect, useState } from 'react';
+import { startTransition, useActionState, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Notify from '@/app/ui/notify';
 import React from 'react';
@@ -111,7 +111,48 @@ export default function Page() {
     const { fields, append, remove } = useFieldArray({
         control,
         name: "hotels",
-    })
+    });
+
+    // Media File Handle
+    const mediaRef = useRef<any>(null);
+
+    const handleFiles = (e: React.ChangeEvent<HTMLInputElement>, hotelIndex: number) => {
+        const files = Array.from(e.target.files || []);
+        // console.log(files.length);
+        const newMedia = files.map((file, i) => {
+            mediaRef.current?.mediaAppend(
+                {
+                    fieldId: '',
+                    mediaFile: null,
+                    alt: '',
+                    path: '',
+                    isVideo: false,
+                }
+            );
+            const id = `${Date.now()}-${i}`;
+            const path = URL.createObjectURL(file);
+
+            return {
+                fieldId: id,
+                mediaFile: file,
+                alt: "",
+                path,
+                isVideo: file.type.startsWith('video/'),
+            } as Media;
+        });
+
+        setmediaList(prev => [...prev, ...newMedia]);
+        // console.log(newMedia.length)
+
+        newMedia.forEach((media, i) => {
+
+            // console.log(i)
+            setValue(`hotels.${hotelIndex}.medias.${mediaList.length + i}.path`, media.path);
+            setValue(`hotels.${hotelIndex}.medias.${mediaList.length + i}.fieldId`, media.fieldId);
+            setValue(`hotels.${hotelIndex}.medias.${mediaList.length + i}.isVideo`, media.isVideo);
+
+        });
+    };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
@@ -377,20 +418,40 @@ export default function Page() {
                                             )}
 
                                             <Typography variant="h6">New Media</Typography>
-                                            <MediasArray nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
+                                            <MediasArray ref={mediaRef} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
 
-                                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, width: '100%' }}>
+                                            <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+                                                <label htmlFor="medias-upload" >
+                                                    <Button variant='outlined' component="span" >Upload Media</Button>
+                                                </label>
+                                                <input
+                                                    accept='video/*, image/*'
+                                                    id='medias-upload'
+                                                    multiple
+                                                    type='file'
+                                                    style={{ display: 'none' }}
+                                                    onChange={(e) => handleFiles(e, index)}
+                                                />
                                                 <Box sx={{ flex: '1 1 auto' }} />
-                                                {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({
-                                                    name: '', rate: 0, amenities: '', medias: [{
-                                                        fieldId: '',
-                                                        mediaFile: null,
-                                                        alt: '',
-                                                        path: '',
-                                                        isVideo: false,
-                                                    }]
-                                                })}>Add Hotel</Button> : null}
-                                                {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    gap: 2,
+                                                    flexDirection: {
+                                                        sm: 'row',
+                                                        xs: 'column'
+                                                    }
+                                                }}>
+                                                    {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({
+                                                        name: '', rate: 0, amenities: '', medias: [{
+                                                            fieldId: '',
+                                                            mediaFile: null,
+                                                            alt: '',
+                                                            path: '',
+                                                            isVideo: false,
+                                                        }]
+                                                    })}>Add Hotel</Button> : null}
+                                                    {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
+                                                </Box>
                                             </Box>
                                         </Grid>
                                     </Box>
