@@ -90,6 +90,43 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
 
                                     {/* Media Buttons */}
                                     <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+                                        <label htmlFor="media-update">
+                                            <Button variant="outlined" component="span">
+                                                Update 
+                                                {/* {field.isVideo ? 'Video' : 'Image'} */}
+                                            </Button>
+                                        </label>
+                                        <input
+                                            type='file'
+                                            id="media-update"
+                                            accept={
+                                                field.isVideo ? 'video/*' : 'image/*'
+                                            }
+                                            style={{ display: 'none' }}
+                                            onChange={(e) => {
+                                                // TODO: Need to call the Update function
+                                                // setValue(`hotels.[${nestIndex}].medias.[${index}].fieldId`, field.id);
+
+                                                const file = e.target.files?.[0]
+                                                // setVideoFile(file ?? null);
+
+                                                if (file) {
+                                                    // const media: Media = {
+                                                    //     fieldId: field.id,
+                                                    //     mediaFile: file,
+                                                    //     alt: "",
+                                                    //     path: "",
+                                                    //     isVideo: false
+                                                    // }
+
+                                                    field.isUpdated = true
+                                                    setValue(`hotels.[${nestIndex}].medias.[${index}].isUpdated`, true)
+                                                    // setmediaList((prev: Media[]) => [...prev, media])
+                                                    setValue(`hotels.[${nestIndex}].medias.[${index}].path`, URL.createObjectURL(file))
+                                                }
+                                            }}
+                                        />
+
                                         <Box sx={{ flex: '1 1 auto' }} />
                                         {/* {index == fields.length - 1 ?
                                         <Button variant="outlined" onClick={() => append(
@@ -118,8 +155,8 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                                 setmediaList((prev: Media[]) => prev.filter((item: Media) => item.fieldId !== field.id))
                                                 remove(index)
                                             }
-                                        }>Remove 
-                                        {/* {field.isVideo ? 'Video' : 'Image'} */}
+                                        }>Remove
+                                            {/* {field.isVideo ? 'Video' : 'Image'} */}
                                         </Button> : null}
                                     </Box>
                                 </Box>
@@ -152,7 +189,7 @@ export default ({ nestIndex, control, register, errors, watch, setValue, setmedi
                                                     Add {field.isVideo ? 'Video' : 'Image'}
                                                 </Button>
                                             </label>
-                                            <input 
+                                            <input
                                                 type='file'
                                                 id="media-upload-update"
                                                 accept={
