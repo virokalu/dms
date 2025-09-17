@@ -9,8 +9,8 @@ export type CreateDealModel = {
     slug: string;
     name: string;
     video: Video;
-    imageFile: File | null;
-    videoFile: File | null;
+    imageFile?: File | null | undefined;
+    videoFile?: File | null | undefined;
     image:string;
     hotels: Hotel[];
 }

@@ -99,12 +99,7 @@ export default function Page() {
                 imageFile: imageFile,
                 hotels: [
                     {
-                        name: '', rate: 0, amenities: '', medias: [{
-                            fieldId: '',
-                            mediaFile: null,
-                            alt: '',
-                            path: ''
-                        }],
+                        name: '', rate: 0, amenities: '',
                     }
                 ]
             }
@@ -427,6 +422,9 @@ export default function Page() {
                                             )}
 
                                             <Typography variant="h6">New Media</Typography>
+
+                                            <p className='error_msg'>{errors?.hotels?.[index]?.medias?.message}</p>
+
                                             <MediasArray 
                                                 key={field.id}
                                                 ref={(ref) => {
