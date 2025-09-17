@@ -139,7 +139,7 @@ export default forwardRef((props: { nestIndex: number, control: Control<CreateDe
                                                     // setVideoFile(file ?? null);
                                                     const media: Media = {
                                                         fieldId: field.id,
-                                                        mediaFile: file,
+                                                        mediaFile: file!,
                                                         alt: "",
                                                         path: "",
                                                         isVideo: false

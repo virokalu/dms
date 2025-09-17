@@ -29,7 +29,7 @@ export type Hotel = {
 
 export type Media ={
     fieldId: string;
-    mediaFile: File | undefined | null;
+    mediaFile: File | null;
     alt: string;
     path: string;
     isVideo: boolean;
