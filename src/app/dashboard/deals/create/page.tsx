@@ -114,21 +114,13 @@ export default function Page() {
     });
 
     // Media File Handle
-    const mediaRef = useRef<any>(null);
+    const mediaRef = useRef<Record<string, any>>({});
 
-    const handleFiles = (e: React.ChangeEvent<HTMLInputElement>, hotelIndex: number) => {
+    const handleFiles = (e: React.ChangeEvent<HTMLInputElement>, hotelIndex: number, fieldId: string) => {
         const files = Array.from(e.target.files || []);
         // console.log(files.length);
         const newMedia = files.map((file, i) => {
-            mediaRef.current?.mediaAppend(
-                {
-                    fieldId: '',
-                    mediaFile: null,
-                    alt: '',
-                    path: '',
-                    isVideo: false,
-                }
-            );
+
             const id = `${Date.now()}-${i}`;
             const path = URL.createObjectURL(file);
 
@@ -145,12 +137,13 @@ export default function Page() {
         // console.log(newMedia.length)
 
         newMedia.forEach((media, i) => {
-
+        
             // console.log(i)
             setValue(`hotels.${hotelIndex}.medias.${mediaList.length + i}.path`, media.path);
             setValue(`hotels.${hotelIndex}.medias.${mediaList.length + i}.fieldId`, media.fieldId);
             setValue(`hotels.${hotelIndex}.medias.${mediaList.length + i}.isVideo`, media.isVideo);
 
+            mediaRef.current[fieldId]?.mediaAppend();
         });
     };
 
@@ -418,19 +411,25 @@ export default function Page() {
                                             )}
 
                                             <Typography variant="h6">New Media</Typography>
-                                            <MediasArray ref={mediaRef} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
+                                            <MediasArray 
+                                                key={field.id}
+                                                ref={(ref) => {
+                                                    if (ref) mediaRef.current[field.id] = ref;
+                                                }}
+                                                // ref={mediaRef} 
+                                                nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
 
                                             <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
-                                                <label htmlFor="medias-upload" >
+                                                <label htmlFor={`medias-upload${index}`} >
                                                     <Button variant='outlined' component="span" >Upload Media</Button>
                                                 </label>
                                                 <input
                                                     accept='video/*, image/*'
-                                                    id='medias-upload'
+                                                    id={`medias-upload${index}`}
                                                     multiple
                                                     type='file'
                                                     style={{ display: 'none' }}
-                                                    onChange={(e) => handleFiles(e, index)}
+                                                    onChange={(e) => handleFiles(e, index, field.id)}
                                                 />
                                                 <Box sx={{ flex: '1 1 auto' }} />
                                                 <Box sx={{

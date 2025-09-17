@@ -207,7 +207,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
             );
             const count = mediaUpdateRef.current[fieldId]?.mediafields?.length;
             //console.log(count);
-            console.log(hotelIndex)
+            // console.log(hotelIndex)
 
             // console.log(i)
             setValue(`hotels.${hotelIndex}.medias.${count + i}.path`, media.path);
