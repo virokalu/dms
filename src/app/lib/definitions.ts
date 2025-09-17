@@ -37,12 +37,12 @@ export type Media ={
 
 export type UpdateMedia ={
     id: string;
-    fieldId: string;
+    fieldId?: string | null;
     mediaFile: File | undefined | null;
     alt: string;
     path: string;
-    isVideo: boolean;
-    isUpdated: false | true;
+    isVideo?: boolean | null;
+    isUpdated?: false | true | boolean | null;
 }
 
 export type UpdateHotelModel = {

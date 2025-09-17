@@ -10,6 +10,8 @@ import React from "react";
 import { DeleteHotel } from "./buttons";
 import { useForm, useFieldArray, SubmitHandler, SubmitErrorHandler, Controller } from "react-hook-form";
 import MediasUpdateArray from "./mediasUpdateArray";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { dealUpdateSchema } from "@/app/lib/validation";
 
 const steps = ['Update Deal Details', 'Update Hotels'];
 
@@ -54,6 +56,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     //ReactHookForm Yup Validation
     const { control, register, trigger, handleSubmit, setValue, formState: { errors, isDirty }, watch } = useForm<UpdateDealModel>(
         {
+            resolver: yupResolver(dealUpdateSchema),
             defaultValues: sentDeal
         }
     );

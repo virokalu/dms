@@ -12,7 +12,7 @@ const steps = ['Add Deal Details', 'Add Hotels'];
 
 import { CreateDealModel, Media } from '@/app/lib/definitions';
 import MediasArray from '@/app/ui/deals/mediasArray';
-import dealSchema from '@/app/lib/validation';
+import {dealSchema} from '@/app/lib/validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 export default function Page() {

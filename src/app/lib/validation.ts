@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { CreateDealModel } from "./definitions";
+import { CreateDealModel, UpdateDealModel } from "./definitions";
 
 const dealSchema: yup.ObjectSchema<CreateDealModel>  = yup.object({
   slug: yup.string().required("Slug is required"),
@@ -19,7 +19,7 @@ const dealSchema: yup.ObjectSchema<CreateDealModel>  = yup.object({
         medias: yup
           .array()
           .of(
-            yup.object({
+            yup.object().shape({
               fieldId: yup.string().required(),
               mediaFile: yup.mixed<File>().nullable().optional().notRequired(),
               alt: yup.string().required("Media Alt is required"),
@@ -44,13 +44,15 @@ const dealSchema: yup.ObjectSchema<CreateDealModel>  = yup.object({
   image: yup.string().required(),
 });
 
-const dealUpdateSchema: yup.ObjectSchema<CreateDealModel>  = yup.object({
+const dealUpdateSchema: yup.ObjectSchema<UpdateDealModel>  = yup.object({
+  id: yup.string().required(),
   slug: yup.string().required("Slug is required"),
   name: yup.string().required("Name is required"),
   hotels: yup
     .array()
     .of(
       yup.object().shape({
+        id: yup.string().required(),
         name: yup.string().required("Hotel name is required"),
         rate: yup
           .number()
@@ -63,11 +65,13 @@ const dealUpdateSchema: yup.ObjectSchema<CreateDealModel>  = yup.object({
           .array()
           .of(
             yup.object({
-              fieldId: yup.string().required(),
+              id: yup.string().required(),
+              fieldId: yup.string().nullable().optional().notRequired(),
               mediaFile: yup.mixed<File>().required().nullable(),
               alt: yup.string().required("Media Alt is required"),
               path: yup.string().required(),
-              isVideo: yup.bool().required(),
+              isVideo: yup.bool().optional().notRequired(),
+              isUpdated: yup.bool().optional().notRequired(),
             })
           )
           .min(1, "At least one Media required")
@@ -87,4 +91,4 @@ const dealUpdateSchema: yup.ObjectSchema<CreateDealModel>  = yup.object({
   image: yup.string().required(),
 });
 
-export default dealSchema;
+export {dealSchema, dealUpdateSchema};
