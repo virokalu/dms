@@ -211,7 +211,7 @@ export default function Page() {
                                 placeholder='Name...'
                                 {...register("name", {
                                     required: true,
-                                    pattern: /^[A-Za-z\s]+$/i
+                                    // pattern: /^[A-Za-z\s]+$/i
                                 })}
                             />
                             {errors?.name?.type === "required" && (
@@ -246,7 +246,7 @@ export default function Page() {
                                     gap: 2
 
                                 }}>
-                                    {watch('video.path') ? <Box><video autoPlay width={300} src={watch('video.path')} /></Box> : <Box><p>No Video to View</p></Box> }
+                                    {watch('video.path') ? <Box><video autoPlay width={300} src={watch('video.path')} /></Box> : <Box></Box> }
 
                                     <label htmlFor="video-upload">
                                         <Button variant="outlined" component="span">
@@ -280,7 +280,7 @@ export default function Page() {
                                         placeholder='Alt...'
                                         {...register("video.alt", {
                                             required: true,
-                                            pattern: /^[A-Za-z\s]+$/i
+                                            // pattern: /^[A-Za-z\s]+$/i
                                         })}
                                     />
 
@@ -297,7 +297,7 @@ export default function Page() {
                                     gap: 2
 
                                 }}>
-                                    {watch('image') ? <Box><img width={300} src={watch('image')} /></Box> : <Box><p>No Image to View</p></Box> }
+                                    {watch('image') ? <Box><img width={300} src={watch('image')} /></Box> : <Box></Box> }
                                     <label htmlFor="image-upload">
                                         <Button variant="outlined" component="span">
                                             Upload Image
@@ -383,7 +383,7 @@ export default function Page() {
                                                 placeholder='Hotel Name...'
                                                 {...register(`hotels.${index}.name`, {
                                                     required: true,
-                                                    pattern: /^[A-Za-z]+$/i
+                                                    // pattern: /^[A-Za-z]+$/i
                                                 })}
                                             />
                                             {errors?.hotels?.[index]?.name?.type === "required" && (

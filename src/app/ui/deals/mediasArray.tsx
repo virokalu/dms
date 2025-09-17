@@ -52,7 +52,7 @@ export default forwardRef((props: { nestIndex: number, control: Control<CreateDe
                                         placeholder='Alt...'
                                         {...register(`hotels[${nestIndex}].medias[${index}].alt`, {
                                             required: true,
-                                            pattern: /^[A-Za-z\s]+$/i
+                                            // pattern: /^[A-Za-z\s]+$/i
                                         })}
                                     />
 
