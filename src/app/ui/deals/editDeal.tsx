@@ -496,6 +496,9 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                             )}
 
                                             <Typography variant="h6">Update Media</Typography>
+
+                                            <p className='error_msg'>{errors?.hotels?.[index]?.medias?.message}</p>
+
                                             <MediasUpdateArray
                                                 key={field.id}
                                                 ref={(ref) => {
@@ -526,15 +529,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                                         xs: 'column'
                                                     }
                                                 }}>{index == fields.length - 1 ? <><Button variant="outlined" onClick={() => append({
-                                                    id: '0', name: '', rate: 0, amenities: '', medias: [{
-                                                        fieldId: '',
-                                                        mediaFile: null,
-                                                        alt: '',
-                                                        path: '',
-                                                        isVideo: false,
-                                                        isUpdated: true,
-                                                        id: '0'
-                                                    }]
+                                                    id: '0', name: '', rate: 0, amenities: '', medias: []
                                                 })}>Add Hotel</Button></> : null}
                                                     {fields.length > 1 && watch(`hotels.${index}.id`) == '0' ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                                     {watch(`hotels.${index}.id`) != '0' ? <DeleteHotel id={watch(`hotels.${index}.id`)} onDeleted={() => handleHotelDeleted(index)} /> : null}

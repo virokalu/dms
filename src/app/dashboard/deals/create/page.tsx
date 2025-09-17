@@ -455,13 +455,7 @@ export default function Page() {
                                                     }
                                                 }}>
                                                     {index == fields.length - 1 ? <Button variant="outlined" onClick={() => append({
-                                                        name: '', rate: 0, amenities: '', medias: [{
-                                                            fieldId: '',
-                                                            mediaFile: null,
-                                                            alt: '',
-                                                            path: '',
-                                                            isVideo: false,
-                                                        }]
+                                                        name: '', rate: 0, amenities: '', medias: []
                                                     })}>Add Hotel</Button> : null}
                                                     {fields.length > 1 ? <Button sx={{ ml: 2 }} variant="outlined" color='warning' onClick={() => remove(index)}>Remove Hotel {index + 1}</Button> : null}
                                                 </Box>
