@@ -79,7 +79,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
     //Handle Submission
     const onSubmit: SubmitHandler<UpdateDealModel> = (data) => {
-        console.log(data)
+        //console.log(data)
         const formData = new FormData();
 
         formData.append("slug", data.slug);
