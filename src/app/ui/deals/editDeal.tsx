@@ -92,7 +92,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
             formData.append(`hotels[${index}].rate`, hotel.rate.toString());
             formData.append(`hotels[${index}].amenities`, hotel.amenities);
             hotel.medias.forEach((media, mediaIndex) => {
-                if (media.isUpdated) {
+                if (media.id == '0') {
                     const mediaFile = mediaList.find(item => item.fieldId == media.fieldId)?.mediaFile;
                     // if (mediaFile != null) {
                     //     const mediaData: Media = {
@@ -109,22 +109,21 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                     // }
 
                     if (mediaFile) {
-                        console.log(mediaFile);
+                        //console.log(mediaFile);
                         formData.append(`hotels[${index}].medias[${mediaIndex}].mediaFile`, mediaFile);
                     } else {
                         console.warn(`Missing mediaFile for fieldId ${media.fieldId}`);
                     }
 
                 } else {
-
-                    formData.append(`hotels[${index}].medias[${mediaIndex}].path`, media.path)
+                    formData.append(`hotels[${index}].medias[${mediaIndex}].id`, media.id)
                 }
                 formData.append(`hotels[${index}].medias[${mediaIndex}].alt`, media.alt);
             })
         });
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
+        // for (const [key, value] of formData.entries()) {
+        //     console.log(`${key}: ${value}`);
+        // }
 
         startTransition(() => {
             updateDealAction(formData);
@@ -239,7 +238,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
                         {/* Deal Text Feild Here */}
 
-                        <Typography sx={{ pt: 4 }} variant="h6">Update Deal Details</Typography>
+                        
                         <Box
                             sx={{
                                 minWidth: 500,
@@ -248,6 +247,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                 gap: 2,
                                 pt: 2,
                             }}>
+                            <Typography sx={{ pt: 4 }} variant="h6">Update Deal Details</Typography>
                             <label htmlFor="slug">Slug</label>
                             <input
                                 readOnly
