@@ -171,24 +171,12 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
     };
 
     // Media File Handle
-    const mediaUpdateRef = useRef<any>(null);
+    const mediaUpdateRef = useRef<Record<string, any>>({});
 
-    const handleFiles = (e: React.ChangeEvent<HTMLInputElement>, hotelIndex: number) => {
+    const handleFiles = (e: React.ChangeEvent<HTMLInputElement>, hotelIndex: number, fieldId: string) => {
         const files = Array.from(e.target.files || []);
         // console.log(files.length);
         const newMedia = files.map((file, i) => {
-            mediaUpdateRef.current?.mediaAppend(
-                {
-                    id: '0',
-                    fieldId: '',
-                    mediaFile: null,
-                    alt: '',
-                    path: '',
-                    isUpdated: true,
-                    isVideo: false,
-
-                }
-            );
             const id = `${Date.now()}-${i}`;
             const path = URL.createObjectURL(file);
 
@@ -205,12 +193,27 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
         // console.log(newMedia.length)
 
         newMedia.forEach((media, i) => {
+            mediaUpdateRef.current[fieldId]?.mediaAppend(
+                {
+                    id: '0',
+                    fieldId: '',
+                    mediaFile: null,
+                    alt: '',
+                    path: media.path,
+                    isUpdated: true,
+                    isVideo: media.isVideo,
+
+                }
+            );
+            const count = mediaUpdateRef.current[fieldId]?.mediafields?.length;
+            //console.log(count);
+            console.log(hotelIndex)
 
             // console.log(i)
-            setValue(`hotels.${hotelIndex}.medias.${mediaUpdateRef.current?.mediafields.length + i}.path`, media.path);
-            setValue(`hotels.${hotelIndex}.medias.${mediaUpdateRef.current?.mediafields.length + i}.id`, '0');
-            setValue(`hotels.${hotelIndex}.medias.${mediaUpdateRef.current?.mediafields.length + i}.fieldId`, media.fieldId);
-            setValue(`hotels.${hotelIndex}.medias.${mediaUpdateRef.current?.mediafields.length + i}.isVideo`, media.isVideo);
+            setValue(`hotels.${hotelIndex}.medias.${count + i}.path`, media.path);
+            setValue(`hotels.${hotelIndex}.medias.${count + i}.id`, '0');
+            setValue(`hotels.${hotelIndex}.medias.${count + i}.fieldId`, media.fieldId);
+            setValue(`hotels.${hotelIndex}.medias.${count + i}.isVideo`, media.isVideo);
 
         });
     };
@@ -238,7 +241,7 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
 
                         {/* Deal Text Feild Here */}
 
-                        
+
                         <Box
                             sx={{
                                 minWidth: 500,
@@ -490,19 +493,26 @@ export default function EditDeal({ sentDeal, API }: { sentDeal: UpdateDealModel,
                                             )}
 
                                             <Typography variant="h6">Update Media</Typography>
-                                            <MediasUpdateArray ref={mediaUpdateRef} API={API} nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
+                                            <MediasUpdateArray
+                                                key={field.id}
+                                                ref={(ref) => {
+                                                    if (ref) mediaUpdateRef.current[field.id] = ref;
+                                                }}
+                                                // ref={mediaUpdateRef} 
+                                                API={API} 
+                                                nestIndex={index} {...{ control, register, errors, watch, setValue, setmediaList }} />
 
                                             <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
-                                                <label htmlFor="medias-upload" >
+                                                <label htmlFor={`medias-upload${index}`} >
                                                     <Button variant='outlined' component="span" >Upload Media</Button>
                                                 </label>
                                                 <input
                                                     accept='video/*, image/*'
-                                                    id='medias-upload'
+                                                    id={`medias-upload${index}`}
                                                     multiple
                                                     type='file'
                                                     style={{ display: 'none' }}
-                                                    onChange={(e) => handleFiles(e, index)}
+                                                    onChange={(e) => handleFiles(e, index, field.id)}
                                                 />
                                                 <Box sx={{ flex: '1 1 auto' }} />
                                                 <Box sx={{
