@@ -21,7 +21,7 @@ const dealSchema: yup.ObjectSchema<CreateDealModel>  = yup.object({
           .of(
             yup.object({
               fieldId: yup.string().required(),
-              mediaFile: yup.mixed<File>().required().nullable(),
+              mediaFile: yup.mixed<File>().nullable().optional().notRequired(),
               alt: yup.string().required("Media Alt is required"),
               path: yup.string().required(),
               isVideo: yup.bool().required(),
