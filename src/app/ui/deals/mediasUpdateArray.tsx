@@ -128,7 +128,7 @@ export default forwardRef((props: { nestIndex: number, control: Control<UpdateDe
                                     {/* Media Buttons */}
                                     <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
                                         {watch(`hotels.[${nestIndex}].medias.[${index}].id`) == '0' ? null :
-                                            <Box><label htmlFor="media-update">
+                                            <Box><label htmlFor={`media-update${index}`}>
                                                 <Button variant="outlined" component="span">
                                                     Update
                                                     {/* {field.isVideo ? 'Video' : 'Image'} */}
@@ -137,7 +137,7 @@ export default forwardRef((props: { nestIndex: number, control: Control<UpdateDe
                                         }
                                         <input
                                             type='file'
-                                            id="media-update"
+                                            id={`media-update${index}`}
                                             accept={
                                                 field.isVideo ? 'video/*' : 'image/*'
                                             }
