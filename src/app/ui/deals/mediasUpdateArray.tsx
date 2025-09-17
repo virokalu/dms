@@ -18,7 +18,7 @@ export default forwardRef((props: { nestIndex: number, control: Control<UpdateDe
         mediafields: fields
     }));
 
-// ({ nestIndex, control, register, errors, watch, setValue, setmediaList, API }: { nestIndex: number, control: Control<UpdateDealModel, any, UpdateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any, API: string }) => {
+    // ({ nestIndex, control, register, errors, watch, setValue, setmediaList, API }: { nestIndex: number, control: Control<UpdateDealModel, any, UpdateDealModel>, register: any, errors: any, watch: any, setValue: any, setmediaList: any, API: string }) => {
     const { fields, remove, append } = useFieldArray({
         control,
         name: `hotels.${nestIndex}.medias`
@@ -81,7 +81,7 @@ export default forwardRef((props: { nestIndex: number, control: Control<UpdateDe
             {fields.map((field, index) => {
 
                 // const isImage = Image.includes(field.path.split('.').pop()!)
-                if (field.path) {
+                if (!field.isUpdated) {
                     const isVideo = Video.includes(field.path.split('.').pop()!)
                     field.isVideo = isVideo
                 }
@@ -214,16 +214,28 @@ export default forwardRef((props: { nestIndex: number, control: Control<UpdateDe
                                             }
                                         }}>
                                             {field.isUpdated ?
-                                                <Box>{
-                                                    !field.isVideo ? <Box>
-                                                        <img width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} />
-                                                    </Box>
-                                                    : <Box><video autoPlay width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} /></Box>
-                                                    }</Box>
+                                                <Box>
+                                                    {
+                                                        !field.isVideo && <Box>
+                                                            <img width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} />
+                                                        </Box>
+                                                    }
+                                                    {
+                                                        field.isVideo && <Box>
+                                                            <video autoPlay width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} />
+                                                        </Box>
+                                                    }
+                                                </Box>
                                                 : <Box>
                                                     {
-                                                        !field.isVideo ? <Box><img width={200} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} /></Box>
-                                                    : <Box><video autoPlay width={200} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} /></Box>
+                                                        !field.isVideo && <Box>
+                                                            <img width={200} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} />
+                                                        </Box>
+                                                    }
+                                                    {
+                                                        field.isVideo && <Box>
+                                                            <video autoPlay width={200} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} />
+                                                        </Box>
                                                     }
                                                 </Box>
                                             }
