@@ -1,5 +1,6 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
 import { Box } from '@mui/material';
+import ToastProvider from '../ui/toastprovider';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -10,6 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Box className="flex-grow p-6 md:overflow-y-auto md:p-12">
                 {children}
             </Box>
+            <ToastProvider/>
         </Box>
     );
 }
