@@ -273,7 +273,7 @@ export async function updateMedia(id: string, data: ImageFile){
     // revalidatePath(`/dashboard/deals/${deal.slug}/edit`);
     return {
       type: "success",
-      message: "Image updated successfully",
+      message: "Media updated successfully",
     };
   }
 }
@@ -305,7 +305,7 @@ export async function deleteMedia(prevState: {
     return {
       id: prevState.id,
       type: "success",
-      message: "Hotel deleted successfully",
+      message: "Media deleted successfully",
     };
   }
 }
