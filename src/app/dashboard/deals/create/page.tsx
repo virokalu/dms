@@ -141,14 +141,11 @@ export default function Page() {
 
             mediaRef.current[fieldId]?.mediaAppend(
                 {
-                    id: '0',
                     fieldId: '',
                     mediaFile: null,
                     alt: '',
                     path: media.path,
-                    isUpdated: true,
                     isVideo: media.isVideo,
-
                 }
             );
         
@@ -184,7 +181,7 @@ export default function Page() {
 
                         {/* Deal Text Feild Here */}
 
-                        <Typography sx={{ pt: 4 }} variant="h6">New Deal Details</Typography>
+                        
                         <Box
                             sx={{
                                 minWidth: 500,
@@ -194,6 +191,7 @@ export default function Page() {
                                 pt: 2,
                             }}
                         >
+                            <Typography sx={{ pt: 4 }} variant="h6">New Deal Details</Typography>
                             <input
                                 className='text_input'
                                 placeholder='Slug...'
@@ -245,7 +243,7 @@ export default function Page() {
                                     gap: 2
 
                                 }}>
-                                    {watch('video.path') ? <video autoPlay width={300} src={watch('video.path')} /> : <p>No Video to View</p>}
+                                    {watch('video.path') ? <Box><video autoPlay width={300} src={watch('video.path')} /></Box> : <Box><p>No Video to View</p></Box> }
 
                                     <label htmlFor="video-upload">
                                         <Button variant="outlined" component="span">
@@ -296,7 +294,7 @@ export default function Page() {
                                     gap: 2
 
                                 }}>
-                                    {watch('image') ? <img width={300} src={watch('image')} /> : <p>No Image to View</p>}
+                                    {watch('image') ? <Box><img width={300} src={watch('image')} /></Box> : <Box><p>No Image to View</p></Box> }
                                     <label htmlFor="image-upload">
                                         <Button variant="outlined" component="span">
                                             Upload Image
@@ -359,9 +357,10 @@ export default function Page() {
                         : (<React.Fragment>
 
                             {/* Hotel Text Feilds Here */}
-                            <Typography sx={{ pt: 4 }} variant="h6">New Hotels</Typography>
+                            
 
                             <Box sx={{ pt: 2 }}>
+                                <Typography sx={{ pt: 4 }} variant="h6">New Hotels</Typography>
                                 {fields.map((field, index) => (
                                     <Box key={field.id} sx={{
                                         borderWidth: 1,

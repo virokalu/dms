@@ -104,10 +104,10 @@ export default forwardRef((props: { nestIndex: number, control: Control<CreateDe
                                             }
                                         }}>
                                             {
-                                                !field.isVideo && <img width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} />
+                                                !field.isVideo && <Box><img width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} /></Box>
                                             }
                                             {
-                                                field.isVideo && <video autoPlay width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} />
+                                                field.isVideo && <Box><video autoPlay width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} /></Box>
                                             }
                                         </Box>
                                         // : <p>No {field.isVideo ? 'Video' : 'Image'} to View</p>}

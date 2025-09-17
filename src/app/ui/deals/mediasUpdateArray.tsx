@@ -214,10 +214,18 @@ export default forwardRef((props: { nestIndex: number, control: Control<UpdateDe
                                             }
                                         }}>
                                             {field.isUpdated ?
-                                                !field.isVideo ? <><img width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} /></>
-                                                    : <><video autoPlay width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} /></>
-                                                : !field.isVideo ? <><img width={200} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} /></>
-                                                    : <><video autoPlay width={200} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} /></>
+                                                <Box>{
+                                                    !field.isVideo ? <Box>
+                                                        <img width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} />
+                                                    </Box>
+                                                    : <Box><video autoPlay width={200} src={watch(`hotels.[${nestIndex}].medias.[${index}].path`)} /></Box>
+                                                    }</Box>
+                                                : <Box>
+                                                    {
+                                                        !field.isVideo ? <Box><img width={200} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} /></Box>
+                                                    : <Box><video autoPlay width={200} src={`${API}/${watch(`hotels.[${nestIndex}].medias.[${index}].path`)}`} /></Box>
+                                                    }
+                                                </Box>
                                             }
                                         </Box>
                                         // : <p>No {field.isVideo ? 'Video' : 'Image'} to View</p>}
