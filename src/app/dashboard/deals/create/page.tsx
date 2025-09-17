@@ -120,7 +120,6 @@ export default function Page() {
         const files = Array.from(e.target.files || []);
         // console.log(files.length);
         const newMedia = files.map((file, i) => {
-
             const id = `${Date.now()}-${i}`;
             const path = URL.createObjectURL(file);
 
@@ -137,13 +136,28 @@ export default function Page() {
         // console.log(newMedia.length)
 
         newMedia.forEach((media, i) => {
+
+            const count = mediaRef.current[fieldId]?.mediaFieldsCreate?.length;
+
+            mediaRef.current[fieldId]?.mediaAppend(
+                {
+                    id: '0',
+                    fieldId: '',
+                    mediaFile: null,
+                    alt: '',
+                    path: media.path,
+                    isUpdated: true,
+                    isVideo: media.isVideo,
+
+                }
+            );
         
             // console.log(i)
-            setValue(`hotels.${hotelIndex}.medias.${mediaList.length + i}.path`, media.path);
-            setValue(`hotels.${hotelIndex}.medias.${mediaList.length + i}.fieldId`, media.fieldId);
-            setValue(`hotels.${hotelIndex}.medias.${mediaList.length + i}.isVideo`, media.isVideo);
+            setValue(`hotels.${hotelIndex}.medias.${count + i}.path`, media.path);
+            setValue(`hotels.${hotelIndex}.medias.${count + i}.fieldId`, media.fieldId);
+            setValue(`hotels.${hotelIndex}.medias.${count + i}.isVideo`, media.isVideo);
 
-            mediaRef.current[fieldId]?.mediaAppend();
+            // mediaRef.current[fieldId]?.mediaAppend();
         });
     };
 

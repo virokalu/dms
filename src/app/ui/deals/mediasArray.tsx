@@ -7,7 +7,8 @@ export default forwardRef((props: { nestIndex: number, control: Control<CreateDe
     const { nestIndex, control, register, errors, watch, setValue, setmediaList } = props;
 
     useImperativeHandle(ref, () => ({
-        mediaAppend: append
+        mediaAppend: append,
+        mediaFieldsCreate: fields
     }));
 
 
